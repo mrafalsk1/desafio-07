@@ -5,6 +5,7 @@ import { AsyncStorage } from "react-native";
 import { AppLoading } from 'expo';
 import Login from './views/Login';
 import Home from './views/Home';
+import Sincronismo from './views/Sincronismo';
 import CustomDrawer from './components/CustomDrawer';
 import * as Font from 'expo-font';
 import 'react-native-gesture-handler'
@@ -13,25 +14,20 @@ class App extends Component {
 
   constructor(props) {
     super(props);
-    // global.config = empresas[Constants.manifest.extra.empresa];
-    // if (!global.config.server) {
-    //   global.config.server = Constants.manifest.releaseChannel ? 'https://agenda.nuvoni.com.br' : 'http://10.20.30.134'
-    // }
 
-    // global.screenStack = [];
+    global.screenStack = [];
 
-    // StatusBar.setBarStyle(global.config.colors.statusBarContent + '-content', true);
     // this.clearStorage()
 
     let navigatorRef
     this.state = {
       appContainer: null,
       loading: true,
-      fontsLoaded: false
     }
   }
 
   componentDidMount() {
+
   }
 
   clearStorage = async () => {
@@ -42,7 +38,6 @@ class App extends Component {
   }
 
   checkData = async () => {
-    console.log('Fonts...')
     await Font.loadAsync({
       'Montserrat-Bold': require('./assets/fonts/Montserrat-Bold.ttf'),
       'OpenSans-Bold': require('./assets/fonts/OpenSans-Bold.ttf'),
@@ -50,54 +45,20 @@ class App extends Component {
     });
 
     console.log('>>>> CHECK LOGIN')
-    // const validation = await AsyncStorage.getItem('@validation')
-    // let usuario = await AsyncStorage.getItem('@usuario')
-    // let empresa = await AsyncStorage.getItem('@empresa')
+    let login = await AsyncStorage.getItem('login')
 
-    // if (empresa) {
-    //   empresa = JSON.parse(empresa)
-    // }
-
-    // if (usuario) {
-    //   usuario = JSON.parse(usuario)
-    // }
-
-    // fetch(global.config.server + '/api/empcli/' + global.config.empresa_id
-    //   + (usuario ? ('?cliente=' + usuario.id) : ''))
-    //   .then((response) => {
-    //     return response.json()
-    //   }).then((responseJson) => {
-    //     if (responseJson.empresa) {
-    //       this.saveEmpresa(responseJson.empresa)
     let initial = 'Login'
-    //       let initialParams = null
-    //       if (responseJson.empresa.agendamentos) {
-    //         initial = 'Agendamentos'
-    //       } else if (responseJson.empresa.pedidos) {
-    //         initial = 'Produtos'
-    //       }
-
-    //       // initial = 'Produtos'
-    //       global.home = initial
-
-    //       if (responseJson.usuario) {
-    //         this.saveUsuario(responseJson.usuario)
-    //         registerForPushNotificationsAsync(responseJson.usuario.id);
-    //       } else if (validation) {
-    //         // this.props.navigation.navigate('CadCli', { semMenu: true, cel: validation })
-    //         initial = 'CadCli'
-    //         initialParams = { semMenu: true, cel: validation }
-    //       } else {
-    //         // this.props.navigation.navigate('Login')
-    //         initial = 'Login'
-    //       }
+    if (login) {
+      login = JSON.parse(login)
+      if (login.equipe && login.senha) {
+        initial = 'Home'
+      }
+    }
 
     this.setState({
       appContainer: this.createDrawer(initial),
       loading: false
     })
-    //     }
-    //   })
   }
 
   createDrawer = (initial) => {
@@ -108,7 +69,8 @@ class App extends Component {
           drawerLockMode: 'locked-closed'
         }
       },
-      Home: { screen: Home }
+      Home: { screen: Home },
+      Sincronismo: { screen: Sincronismo }
     },
       {
         initialRouteName: initial,

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, Image, Keyboard, StyleSheet, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
+import { Text, View, Image } from 'react-native';
 import { withNavigation, NavigationEvents } from 'react-navigation';
 import Titulo from '../components/Titulo';
 import DefaultInput from '../components/DefaultInput';
@@ -7,8 +7,7 @@ import DefaultButtonGrP from '../components/DefaultButtonGrP';
 import * as Server from '../components/ServerConfig';
 import styles from '../assets/js/Styles';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-
-
+import { AsyncStorage } from "react-native"
 
 class Login extends Component {
 
@@ -16,22 +15,58 @@ class Login extends Component {
         super(props);
 
         this.state = {
-            equipe: null,
-            senha: null
+            equipe: '',
+            senha: '',
+            erro: false,
+            loading: false
         }
     }
 
     login = () => {
         console.log('logando')
+        this.setState({
+            erro: false,
+            loading: true
+        })
         Server.post('equipe/login',
             { equipe: this.state.equipe, senha: this.state.senha })
             .then(json => {
+                this.setState({
+                    loading: false
+                })
+
                 if (json.status) {
-                    console.log('LOGADO')
+                    console.log('LOGOU')
+                    this.saveLogin().then(() => {
+                        this.props.navigation.navigate('Home')
+                    })
+
                 } else {
-                    console.log('ERRROO')                    
+                    this.setState({
+                        erro: true
+                    })
                 }
             })
+    }
+
+    saveLogin = async () => {
+        try {
+            login = {
+                equipe: this.state.equipe,
+                senha: this.state.senha
+            }
+
+            return AsyncStorage.setItem('login', JSON.stringify(login))
+        } catch (e) { }
+    }
+
+    onFocus = () => {
+        this.setState({
+            equipe: '',
+            senha: '',
+            erro: false,
+            loading: false
+        })
     }
 
     render() {
@@ -47,6 +82,10 @@ class Login extends Component {
                     flexDirection: 'column',
                     alignItems: 'stretch'
                 }}>
+
+                <NavigationEvents
+                    onDidFocus={this.onFocus}
+                />
 
                 <Titulo style={{ marginTop: 100 }}>Login</Titulo>
 
@@ -96,6 +135,7 @@ class Login extends Component {
                         style={{
                             marginVertical: 5
                         }}
+                        value={this.state.senha}
                         onChangeText={text => {
                             this.setState({
                                 senha: text
@@ -103,10 +143,22 @@ class Login extends Component {
                         }}
                     />
 
+                    {
+                        this.state.erro ?
+                            <Text style={{
+                                fontFamily: 'OpenSans',
+                                fontSize: 18,
+                                color: 'red',
+                                marginTop: 20
+                            }}>Equipe ou senha incorretos</Text>
+                            : null
+                    }
+
                     <View style={{ alignItems: 'center' }}>
                         <DefaultButtonGrP
                             title='Fazer Login'
                             onPress={this.login}
+                            loading={this.state.loading}
                             style={{
                                 marginVertical: 30,
                                 width: '80%'

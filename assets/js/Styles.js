@@ -8,7 +8,18 @@ export default StyleSheet.create({
 
     defaultBgColor: {
         backgroundColor: '#F5F5F5'
-    }
+    },
 
-    
+    menu: {
+        fontFamily: 'OpenSans-Bold',
+        fontSize: 22,
+        color: '#141204',
+        padding: 25
+    },
+
+    buttonText: {
+        fontFamily: 'Montserrat-Bold',
+        fontSize: 22,
+        color: '#fff'
+    }
 });

@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { Text, View, Image, Animated, Keyboard, StyleSheet, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
 import { withNavigation, NavigationEvents } from 'react-navigation';
+import DefaultView from '../components/DefaultView';
+import DefaultButtonFlP from '../components/DefaultButtonFlP';
+
 
 class Home extends Component {
 
@@ -15,9 +18,10 @@ class Home extends Component {
 
     render() {
         return (
-            <View>
-                <Text>HOMER</Text>
-            </View>
+            <DefaultView titulo='Obras'>
+                <Text>Homer</Text>
+                <DefaultButtonFlP title='Leite Quente'/>
+            </DefaultView>
         );
     }
 }

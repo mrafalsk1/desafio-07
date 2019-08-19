@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import { Text } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { Text, View } from 'react-native';
 import DefaultButton from './DefaultButton';
 import styles from '../assets/js/Styles';
 
 
-class DefaultButtonGrP extends Component {
+class DefaultButtonFlP extends Component {
 
     constructor(props) {
         super(props);
@@ -18,24 +17,22 @@ class DefaultButtonGrP extends Component {
         return (
             <DefaultButton
                 loading={this.props.loading}
-                style={{ ...this.props.style }}
                 onPress={this.props.onPress}
+                style={{ ...this.props.style }}
             >
-                <LinearGradient
-                    colors={['#EF8F3B', '#D04B3E']}
+                <View
                     style={{
-                        alignItems: 'center',
                         paddingHorizontal: 35,
-                        paddingVertical: 15
-                    }}
-                    start={[1, 0]} end={[0, 1]}>
+                        paddingVertical: 15,
+                        alignItems: 'center',
+                        backgroundColor: '#EF8F3B'
+                    }}>
                     <Text style={styles.buttonText}>{this.props.title}</Text>
-
-                </LinearGradient>
+                </View>
             </DefaultButton>
 
         )
     }
 }
 
-export default DefaultButtonGrP
+export default DefaultButtonFlP

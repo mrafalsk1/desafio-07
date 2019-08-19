@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { View, Text, Linking, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { NavigationActions, withNavigation } from 'react-navigation';
 import TopMenuBar from './TopMenuBar';
+import styles from '../assets/js/Styles';
+import { AsyncStorage } from "react-native";
 
 
 export default class CustomDrawer extends Component {
@@ -14,53 +16,81 @@ export default class CustomDrawer extends Component {
         }
     }
 
-    navigateToScreen = (route, params) => (
+    navigateToScreen = (route) => (
         () => {
-            const navigateAction = NavigationActions.navigate({
-                routeName: route,
-                params: params
-            });
-            this.props.navigation.dispatch(navigateAction);
+            // const navigateAction = NavigationActions.navigate({
+            //     routeName: route,
+            //     params: params
+            // });
+            // this.props.navigation.dispatch(navigateAction);
+            this.props.navigation.navigate(route)
+        }
+    )
+
+    sair = async () => {
+        await AsyncStorage.clear().then(() => {
+            console.log('CLEARED')
+            // this.navigateToScreen('Login')
+            this.props.navigation.navigate('Login')
         })
+
+    }
 
     render() {
         return (
             <View style={{
                 flex: 1,
-                flexDirection: 'column',
-                justifyContent: 'space-between',
+                backgroundColor: '#FFF'
             }}>
-                <TopMenuBar color='#FFFFFF' />
+                <TopMenuBar />
 
                 <View style={{
+                    ...styles.defaultPadding,
                     flex: 1,
                     flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                }}>
-                    <Text>Início</Text>
-                </View>
+                    justifyContent: 'flex-start',
+                    alignItems: 'flex-start',
+                    paddingTop: 30,
 
-                <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-end', maxHeight: 150, padding: 20, paddingBottom: 20 }}>
-                    <View>
-                        <TouchableOpacity activeOpacity={0.5} onPress={this.navigateToScreen('CadCli', { semMenu: false })}>
-                            <Text>Sair</Text>
+                }}>
+                    <View style={{
+                        flex: 1,
+                    }}>
+                        <TouchableOpacity
+                            activeOpacity={0.5}
+                            onPress={this.navigateToScreen('Home')}>
+                            <Text style={styles.menu}>Início</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            activeOpacity={0.5}
+                            onPress={this.navigateToScreen('Home')}>
+                            <Text style={styles.menu}>Obras</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            activeOpacity={0.5}
+                            onPress={this.navigateToScreen('Sincronismo')}>
+                            <Text style={styles.menu}>Sincronização</Text>
                         </TouchableOpacity>
                     </View>
-                    {/* <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
-                        {this.state.empresa.facebook ? <View>
-                            <TouchableOpacity activeOpacity={0.5} onPress={() => Linking.openURL(this.state.empresa.facebook)}>
-                                <AntDesign name='facebook-square' size={45} color='#FFFFFF' />
-                            </TouchableOpacity>
-                        </View>
-                            : null}
-                        {this.state.empresa.instagram ? <View style={{ paddingLeft: 20 }}>
-                            <TouchableOpacity activeOpacity={0.5} onPress={() => Linking.openURL(this.state.empresa.instagram)}>
-                                <AntDesign name='instagram' size={45} color='#FFFFFF' />
-                            </TouchableOpacity>
-                        </View>
-                            : null}
-                    </View> */}
+
+
+                    <View style={{
+                        flex: 2,
+                        flexDirection: 'row',
+                        alignItems: 'flex-end',
+                        justifyContent: 'flex-end',
+                        width: '100%',
+
+                        paddingBottom: 30
+                    }}>
+                        <TouchableOpacity
+                            activeOpacity={0.5}
+                            onPress={this.sair}>
+                            <Text style={styles.menu}>Sair</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </View>
         )
