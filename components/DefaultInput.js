@@ -22,6 +22,7 @@ class DefaultInput extends Component {
                     borderColor: '#E4DFDA',
                     backgroundColor: '#fff'
                 }}
+                keyboardType={this.props.keyboardType}
                 autoCapitalize={this.props.autoCapitalize}
                 onChangeText={this.props.onChangeText}
                 value={this.props.value}

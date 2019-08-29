@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { TouchableOpacity, Text, ActivityIndicator } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 
 class DefaultButtonGrP extends Component {
 

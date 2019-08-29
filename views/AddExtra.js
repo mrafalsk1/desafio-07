@@ -3,27 +3,27 @@ import { Text, View, Image, Animated, Keyboard, StyleSheet, KeyboardAvoidingView
 import { withNavigation, NavigationEvents } from 'react-navigation';
 import DefaultView from '../components/DefaultView';
 import DefaultButtonFlP from '../components/DefaultButtonFlP';
+import * as SyncUtil from '../components/SyncUtil';
 
 
-class Home extends Component {
+class AddExtra extends Component {
 
     constructor(props) {
         super(props);
 
         this.state = {
-
         }
     }
 
+    
 
     render() {
         return (
-            <DefaultView titulo='Obras'>
-                <Text>Homer</Text>
-                <DefaultButtonFlP title='Leite Quente'/>
+            <DefaultView titulo='Adicionar Extra' voltar={true}>
+                
             </DefaultView>
         );
     }
 }
 
-export default withNavigation(Home);
+export default withNavigation(AddExtra);

@@ -1,12 +1,17 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { NavigationActions, createAppContainer, createDrawerNavigator } from 'react-navigation';
+import { NavigationActions, createAppContainer, createDrawerNavigator, createStackNavigator } from 'react-navigation';
 import { AsyncStorage } from "react-native";
 import { AppLoading } from 'expo';
 import Login from './views/Login';
-import Home from './views/Home';
+import Notas from './views/Notas';
+import Pontos from './views/Pontos';
+import Items from './views/Items';
+import AddExtra from './views/AddExtra';
+import EditItem from './views/EditItem';
 import Sincronismo from './views/Sincronismo';
 import CustomDrawer from './components/CustomDrawer';
+import TopMenuBar from './components/TopMenuBar';
 import * as Font from 'expo-font';
 import 'react-native-gesture-handler'
 
@@ -14,8 +19,6 @@ class App extends Component {
 
   constructor(props) {
     super(props);
-
-    global.screenStack = [];
 
     // this.clearStorage()
 
@@ -51,7 +54,7 @@ class App extends Component {
     if (login) {
       login = JSON.parse(login)
       if (login.equipe && login.senha) {
-        initial = 'Home'
+        initial = 'Recent'
       }
     }
 
@@ -62,6 +65,34 @@ class App extends Component {
   }
 
   createDrawer = (initial) => {
+    const stack = createStackNavigator({
+      Notas: { screen: Notas },
+      Pontos: { screen: Pontos },
+      Items: { screen: Items },
+      Sincronismo: { screen: Sincronismo },
+      AddExtra: { screen: AddExtra },
+      EditItem: { screen: EditItem }
+    },
+      {
+        initialRouteName: 'Notas',
+        headerMode: 'float',
+        // mode: 'modal',
+        cardShadowEnabled: false,
+
+        cardStyle: {
+          shadowColor: 'transparent',
+        },
+        defaultNavigationOptions : {
+          headerLeft : <TopMenuBar />,
+          headerStyle: {
+            elevation: 0,
+            shadowOpacity: 0,
+            borderBottomWidth: 0
+          }
+        }
+      });
+
+
     const drawer = createDrawerNavigator({
       Login: {
         screen: Login,
@@ -69,8 +100,9 @@ class App extends Component {
           drawerLockMode: 'locked-closed'
         }
       },
-      Home: { screen: Home },
-      Sincronismo: { screen: Sincronismo }
+      Recent: {
+        screen: stack
+      }
     },
       {
         initialRouteName: initial,
@@ -91,7 +123,7 @@ class App extends Component {
         startAsync={this.checkData}
         onFinish={() => this.setState({ loading: false })}
       />
-    } 
+    }
 
     return <this.state.appContainer ref={ref => this.navigatorRef = ref} />;
   }
@@ -99,21 +131,3 @@ class App extends Component {
 }
 
 export default App;
-
-// const DrawerNavigator = createDrawerNavigator(
-//   {
-//     Home: Home,
-//     Login: Login,
-//   },
-//   {
-//     hideStatusBar: true,
-//     drawerBackgroundColor: 'rgba(255,255,255,.9)',
-//     overlayColor: '#6b52ae',
-//     contentOptions: {
-//       activeTintColor: '#fff',
-//       activeBackgroundColor: '#6b52ae',
-//     },
-//   }
-// );
-
-// export default createAppContainer(DrawerNavigator);

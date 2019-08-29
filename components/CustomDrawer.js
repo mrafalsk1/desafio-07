@@ -58,14 +58,8 @@ export default class CustomDrawer extends Component {
                     }}>
                         <TouchableOpacity
                             activeOpacity={0.5}
-                            onPress={this.navigateToScreen('Home')}>
-                            <Text style={styles.menu}>Início</Text>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity
-                            activeOpacity={0.5}
-                            onPress={this.navigateToScreen('Home')}>
-                            <Text style={styles.menu}>Obras</Text>
+                            onPress={this.navigateToScreen('Notas')}>
+                            <Text style={styles.menu}>Notas</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity

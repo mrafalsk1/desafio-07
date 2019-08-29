@@ -15,49 +15,21 @@ class DefaultView extends Component {
         }
     }
 
-    handleBackPress = () => {
-        let len = global.screenStack.length
-        if (len > 1) {
-            global.screenStack.splice(len - 1, 1);
-            let last = global.screenStack[len - 2];
-            this.props.navigation.navigate(last, { goingBack: true })
-        }
-        return true
-    }
-
-    onFocus = () => {
-        BackHandler.addEventListener("hardwareBackPress", this.handleBackPress);
-
-        if (!this.props.navigation.state.params || !this.props.navigation.state.params.goingBack) {
-            global.screenStack.push(this.props.navigation.state.routeName)
-        }
-
-        if (this.props.onFocus)
-            this.props.onFocus()
-    }
-
-    onBlur = () => {
-        BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
-
-        if (this.props.onBlur)
-            this.props.onBlur()
-    }
-
     render() {
         return (
             <View style={{
-                ...this.props.style,
                 flex: 1,
                 width: '100%',
                 flexDirection: 'column',
-                backgroundColor: '#FFF'
+                backgroundColor: '#FFF',
+                ...this.props.style,
             }}>
                 <NavigationEvents
                     onDidFocus={this.onFocus}
                     onWillBlur={this.onBlur}
                 />
 
-                <TopMenuBar />
+                {/* <TopMenuBar /> */}
 
                 <View style={{
                     flex: 1,
@@ -66,14 +38,15 @@ class DefaultView extends Component {
                     paddingTop: 15,
                     ...styles.defaultPadding,
                 }}>
-                    <Titulo style={{}} voltar={this.props.voltar}>{this.props.titulo}</Titulo>
+                    <Titulo voltar={this.props.voltar}>{this.props.titulo}</Titulo>
 
                     <View style={{
                         flex: 1,
                         width: '100%',
                         flexDirection: 'column',
-                        paddingTop: 20,
-                        alignItems: 'center'
+                        // paddingTop: 20,
+                        alignItems: 'center',
+                        ...this.props.containerStyle,
                     }}>
                         {this.props.children}
                     </View>

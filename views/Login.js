@@ -38,7 +38,7 @@ class Login extends Component {
                 if (json.status) {
                     console.log('LOGOU')
                     this.saveLogin().then(() => {
-                        this.props.navigation.navigate('Home')
+                        this.props.navigation.navigate('Notas')
                     })
 
                 } else {

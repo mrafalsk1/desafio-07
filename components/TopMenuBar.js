@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-import { View, TouchableOpacity, Text } from 'react-native';
-import { Foundation, Entypo } from '@expo/vector-icons';
+import { View, TouchableOpacity } from 'react-native';
+import { Entypo } from '@expo/vector-icons';
 import { withNavigation, DrawerActions } from 'react-navigation'
-import * as SyncUtil from '../components/SyncUtil';
-import * as Animatable from 'react-native-animatable'
 
 class TopMenuBar extends Component {
 
@@ -16,15 +14,17 @@ class TopMenuBar extends Component {
     }
 
     sync = () => {
-        this.setState({
-            sync: true
-        })
-        SyncUtil.sync().then(() => {
-            console.log('FEITO')
-            this.setState({
-                sync: false
-            })
-        })
+        // this.setState({
+        //     sync: true
+        // })
+        // SyncUtil.sync().then(() => {
+        //     console.log('FEITO')
+        //     this.setState({
+        //         sync: false
+        //     })
+        // })
+
+        this.props.navigation.navigate('Sincronismo')
     }
 
     render() {
@@ -40,12 +40,12 @@ class TopMenuBar extends Component {
                 alignItems: 'center',
                 flexDirection: 'row',
             }}>
-                <View
+                {/* <View
                     style={{
                         flex: 1,
                         flexDirection: 'row',
                     }}
-                >
+                > */}
 
                     <TouchableOpacity
                         activeOpacity={0.5}
@@ -59,9 +59,9 @@ class TopMenuBar extends Component {
                             }}
                         />
                     </TouchableOpacity>
-                </View>
+                {/* </View> */}
 
-                <View
+                {/* <View
                     style={{
                         flex: 1,
                         flexDirection: 'row',
@@ -90,7 +90,7 @@ class TopMenuBar extends Component {
                                 <Foundation name='refresh' size={25} color={'#000'} />
                             </TouchableOpacity>
                     }
-                </View>
+                </View> */}
             </View>
         )
     }

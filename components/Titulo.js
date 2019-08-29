@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Text, View, TouchableOpacity } from 'react-native';
-import { withNavigation } from 'react-navigation';
+import { withNavigation  } from 'react-navigation';
 import { AntDesign } from '@expo/vector-icons';
 
 class Titulo extends Component {
@@ -12,13 +12,8 @@ class Titulo extends Component {
         }
     }
 
-    goBack = () =>{
-        let len = global.screenStack.length
-        if (len > 1) {
-            global.screenStack.splice(len - 1, 1);
-            let last = global.screenStack[len - 2];
-            this.props.navigation.navigate(last, { goingBack: true })
-        }
+    goBack = () => {
+          this.props.navigation.goBack(null)
     }
 
     render() {
@@ -26,9 +21,7 @@ class Titulo extends Component {
             return (
                 <View
                     style={{
-                        // flex: 1,
                         flexDirection: 'row',
-                        alignItems: 'center'
                     }}
                 >
                     <TouchableOpacity
@@ -36,13 +29,14 @@ class Titulo extends Component {
                         style={{
                             padding: 10,
                             zIndex: 2,
-                            left: -10
+                            left: -10,
+                            position: 'absolute',
                         }}
-                    onPress={this.goBack}
+                        onPress={this.goBack}
                     >
                         <AntDesign
                             name='arrowleft'
-                            size={30}
+                            size={33}
                             color={'#000'}
                         />
                     </TouchableOpacity>
@@ -52,7 +46,8 @@ class Titulo extends Component {
                         fontFamily: 'Montserrat-Bold',
                         fontSize: 28,
                         width: '100%',
-                        position: 'absolute',
+                        marginTop: 10,
+                        marginBottom: 20,
                         zIndex: 1,
                         textAlign: 'center',
                     }}>
@@ -62,14 +57,16 @@ class Titulo extends Component {
             )
         } else {
             return (
+
                 <Text style={{
-                    ...this.props.style,
                     fontFamily: 'Montserrat-Bold',
-                    fontSize: 28
+                    fontSize: 28,
+                    marginTop: 10,
+                    marginBottom: 20,
+                    ...this.props.style,
                 }}>
                     {this.props.children}
                 </Text>
-
             )
         }
     }
