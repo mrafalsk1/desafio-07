@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, Keyboard, ActivityIndicator } from 'react-native';
 import { withNavigation } from 'react-navigation';
 import DefaultView from '../components/DefaultView';
 import Nota from '../components/Nota';
 import styles from '../assets/js/Styles';
-
+import * as DBUtil from '../components/DBUtil'
+import SwitchSelector from "react-native-switch-selector"
+import moment from 'moment'
 
 class Notas extends Component {
 
@@ -13,36 +15,67 @@ class Notas extends Component {
         super(props);
 
         this.state = {
-            notas: [
-                {
-                    key: '123456',
-                    numero: '123456'
-                },
-                {
-                    key: '6543210',
-                    numero: '6543210'
-                }
-            ]
+            notas: [],
+            loading: false,
+            turno: moment().format('a')
         }
     }
 
-    componentDidMount() {
-        
+    onFocus = () => {
+        Keyboard.dismiss()
+        this.busca(this.state.turno)
     }
 
+    busca = (turno) => {
+        this.setState({ loading: true })
+
+        DBUtil.getNotas(turno).then((notas) => {
+            notas.forEach(n => {
+                n.key = n.ag_id + ''
+            });
+
+            this.setState({ notas: notas, loading: false })
+        })
+    }
 
     render() {
+        const font = { fontFamily: 'OpenSans', fontSize: 16 }
         return (
-            <DefaultView titulo='Notas'>
-
-                <FlatList
-                style={{
-                    width: '100%'
-                }}
-                    data={this.state.notas}
-                    renderItem={({ item }) => <Nota nota={item} />}
+            <DefaultView
+                titulo='Notas'
+                onFocus={this.onFocus}
+            >
+                <SwitchSelector
+                    style={{
+                        position: "absolute",
+                        width: '50%',
+                        top: -50,
+                        right: 0,
+                    }}
+                    hasPadding
+                    buttonColor='#EF8F3B'
+                    borderColor='#E4DFDA'
+                    textStyle={font}
+                    selectedTextStyle={font}
+                    initial={this.state.turno == 'am' ? 0 : 1}
+                    options={[
+                        { label: "Manhã", value: "am" },
+                        { label: "Tarde", value: "pm" }
+                    ]}
+                    onPress={value => { this.setState({ turno: value }); this.busca(value) }}
                 />
 
+                {this.state.loading ?
+                    <ActivityIndicator size="large" color="#EF8F3B" /> :
+                    <FlatList
+                        style={{
+                            width: '100%'
+                        }}
+                        showsVerticalScrollIndicator={false}
+                        data={this.state.notas}
+                        renderItem={({ item }) => <Nota nota={item} />}
+                    />
+                }
             </DefaultView>
         );
     }

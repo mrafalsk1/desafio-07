@@ -3,6 +3,9 @@ import { View, Text, TouchableHighlight } from 'react-native';
 import { withNavigation, NavigationEvents } from 'react-navigation';
 import { MaterialIcons } from '@expo/vector-icons';
 import styles from '../assets/js/Styles';
+import * as DBUtil from '../components/DBUtil'
+
+
 
 class Item extends Component {
 
@@ -10,14 +13,21 @@ class Item extends Component {
         super(props);
 
         this.state = {
-            feito: false
+            item: props.item
         }
     }
 
 
-    feito = () => {
+    feito = async () => {
+        let item = this.state.item
+        item.realizado = item.realizado ? 0 : 1
+        if (item.qtr == null) {
+            item.qtr = item.qt
+        }
+        await DBUtil.setItemRealizado(item)
+
         this.setState({
-            feito: !this.state.feito
+            item: item
         })
     }
 
@@ -37,6 +47,16 @@ class Item extends Component {
                     overflow: 'hidden'
                 }}
             >
+                {this.state.item.operacao == 'RETIRAR' ?
+                    <View
+                        style={{
+                            position: "absolute",
+                            left: 0,
+                            height: '100%',
+                            width: 10,
+                            backgroundColor: '#ea4242'
+                        }}
+                    /> : null}
 
                 <TouchableHighlight
                     style={{
@@ -49,7 +69,7 @@ class Item extends Component {
                     }}
                     activeOpacity={0.5}
                     underlayColor='#FAFAFA'
-                    onPress={() => this.props.navigation.navigate('EditItem', { item: this.props.item })}
+                    onPress={() => this.props.navigation.navigate('EditItem', { item: this.state.item, novo: false })}
                 >
                     <View style={{ paddingVertical: 10 }}>
                         <Text
@@ -59,7 +79,7 @@ class Item extends Component {
                                 color: '#4B4B46'
                             }}
                         >
-                            {this.props.item.descricao}
+                            {this.state.item.descricao}
                         </Text>
                         <View
                             style={{
@@ -82,7 +102,7 @@ class Item extends Component {
                                     color: '#4B4B46'
                                 }}
                             >
-                                {this.props.item.previsto + '/' + (this.props.item.realizado ? this.props.item.realizado : '**')}
+                                {this.state.item.qt + '/' + (this.state.item.qtr ? this.state.item.qtr : '**')}
                             </Text>
                         </View>
 
@@ -118,7 +138,7 @@ class Item extends Component {
                                 marginHorizontal: 18
                             }}
                         >
-                            <MaterialIcons name='check-circle' size={28} color={this.state.feito ? '#93E1D8' : '#E4DFDA'} />
+                            <MaterialIcons name='check-circle' size={28} color={this.state.item.realizado ? '#93E1D8' : '#E4DFDA'} />
                         </View>
                     </View>
 

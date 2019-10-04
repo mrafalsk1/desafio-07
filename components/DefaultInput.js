@@ -13,14 +13,15 @@ class DefaultInput extends Component {
     render() {
         return (
                 <TextInput style={{
-                    ...this.props.style,
                     fontFamily: 'OpenSans',
                     fontSize: 16,
                     padding: 10,
                     borderRadius: 10,
                     borderWidth: 1,
                     borderColor: '#E4DFDA',
-                    backgroundColor: '#fff'
+                    backgroundColor: '#fff',
+                    ...this.props.style,
+                    maxHeight: 40
                 }}
                 keyboardType={this.props.keyboardType}
                 autoCapitalize={this.props.autoCapitalize}

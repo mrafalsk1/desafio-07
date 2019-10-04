@@ -18,7 +18,6 @@ class TopMenuBar extends Component {
         //     sync: true
         // })
         // SyncUtil.sync().then(() => {
-        //     console.log('FEITO')
         //     this.setState({
         //         sync: false
         //     })

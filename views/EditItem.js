@@ -5,6 +5,7 @@ import DefaultView from '../components/DefaultView';
 import DefaultButtonFlC from '../components/DefaultButtonFlC';
 import * as SyncUtil from '../components/SyncUtil';
 import DefaultInput from '../components/DefaultInput';
+import * as DBUtil from '../components/DBUtil'
 
 
 class EditItem extends Component {
@@ -13,12 +14,21 @@ class EditItem extends Component {
         super(props);
 
         this.state = {
-            item: this.props.navigation.getParam('item')
+            item: this.props.navigation.getParam('item'),
+            novo: this.props.navigation.getParam('novo')
         }
     }
 
-    save = () => {
-        this.props.navigation.goBack(null)
+    save = async () => {
+        if (this.state.item.qtr > 0) {
+            if (!this.state.novo) {
+                await DBUtil.setItemRealizado(this.state.item)
+                this.props.navigation.goBack()
+            } else {
+                await DBUtil.addItemRealizado(this.state.item)
+                this.props.navigation.pop(2)
+            }
+        }
     }
 
     render() {
@@ -27,7 +37,7 @@ class EditItem extends Component {
                 titulo='Editar Item'
                 voltar={true}
             >
-                <View style={{flex:1, alignItems: 'stretch', width: '100%' }}>
+                <View style={{ flex: 1, alignItems: 'stretch', width: '100%' }}>
                     <Text
                         style={{
                             fontFamily: 'OpenSans-Bold',
@@ -40,27 +50,30 @@ class EditItem extends Component {
                         {this.state.item.descricao}
                     </Text>
 
-                    <Text style={{
-                        fontFamily: 'OpenSans',
-                        fontSize: 18,
-                        color: '#4B4B46',
-                        marginVertical: 10
-                    }}>Previsto: {this.state.item.previsto}</Text>
+                    {this.state.item.qt ?
+                        <Text style={{
+                            fontFamily: 'OpenSans',
+                            fontSize: 18,
+                            color: '#4B4B46',
+                            marginVertical: 10
+                        }}>Previsto: {this.state.item.qt}</Text> : null}
 
-                    <Text style={{
+                    < Text style={{
                         fontFamily: 'OpenSans',
                         fontSize: 18,
                         color: '#4B4B46',
-                    }}>Realizado</Text>
+                    }}>{this.state.item.qt ? 'Realizado' : 'Quantidade'}</Text>
+
                     <DefaultInput
                         style={{
                             marginVertical: 5
                         }}
                         keyboardType='numeric'
-                        value={ String(this.state.item.realizado ? this.state.item.realizado : this.state.item.previsto) }
+                        // value={ String(this.state.item.qtr ? this.state.item.qtr : this.state.item.qt) }
+                        value={this.state.item.qtr ? String(this.state.item.qtr) : null}
                         onChangeText={text => {
                             item = this.state.item
-                            item.realizado = Number(text)
+                            item.qtr = Number(text)
                             this.setState({
                                 item: item
                             })
@@ -77,7 +90,7 @@ class EditItem extends Component {
                     }}
                     onPress={this.save}
                 />
-            </DefaultView>
+            </DefaultView >
         );
     }
 }

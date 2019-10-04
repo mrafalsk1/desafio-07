@@ -14,6 +14,10 @@ import CustomDrawer from './components/CustomDrawer';
 import TopMenuBar from './components/TopMenuBar';
 import * as Font from 'expo-font';
 import 'react-native-gesture-handler'
+import * as DBUtil from './components/DBUtil';
+
+const db = DBUtil.getDB();
+
 
 class App extends Component {
 
@@ -35,7 +39,9 @@ class App extends Component {
 
   clearStorage = async () => {
     try {
+      console.log('CLEARING XXXXXXXXXXXXXXXXXX')
       await AsyncStorage.clear()
+      await DBUtil.dropTables()
     } catch (e) {
     }
   }
@@ -46,6 +52,15 @@ class App extends Component {
       'OpenSans-Bold': require('./assets/fonts/OpenSans-Bold.ttf'),
       'OpenSans': require('./assets/fonts/OpenSans-Regular.ttf'),
     });
+
+    console.log('Preparando banco...')
+    await DBUtil.prepareDB().then((res) => {
+      if (res === true) {
+        console.log('DB OK!!!')
+      }
+    }).catch((e) => {
+      console.error(e)
+    })
 
     console.log('>>>> CHECK LOGIN')
     let login = await AsyncStorage.getItem('login')
@@ -82,8 +97,8 @@ class App extends Component {
         cardStyle: {
           shadowColor: 'transparent',
         },
-        defaultNavigationOptions : {
-          headerLeft : <TopMenuBar />,
+        defaultNavigationOptions: {
+          headerLeft: <TopMenuBar />,
           headerStyle: {
             elevation: 0,
             shadowOpacity: 0,

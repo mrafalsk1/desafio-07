@@ -3,6 +3,8 @@ import { View, Text, TouchableHighlight } from 'react-native';
 import { withNavigation, NavigationEvents } from 'react-navigation';
 import { MaterialIcons } from '@expo/vector-icons';
 import styles from '../assets/js/Styles';
+import * as DBUtil from '../components/DBUtil'
+
 
 class Ponto extends Component {
 
@@ -10,7 +12,8 @@ class Ponto extends Component {
         super(props);
 
         this.state = {
-            trabalhando: false
+            trabalhando: false,
+            idTempo: this.props.ponto.tempo_id
         }
     }
 
@@ -19,9 +22,19 @@ class Ponto extends Component {
     }
 
     tempo = () => {
-        this.setState({
-            trabalhando: !this.state.trabalhando
-        })
+        if (!this.state.idTempo) {
+            DBUtil.startTempo(this.props.ponto.ap_id).then((id) => {
+                this.setState({
+                    idTempo: id
+                })
+            })
+        } else {
+            DBUtil.fechaTempo(this.state.idTempo).then((res) => {
+                this.setState({
+                    idTempo: null
+                })
+            })
+        }
     }
 
     render() {
@@ -90,7 +103,7 @@ class Ponto extends Component {
                                 marginHorizontal: 18
                             }}
                         >
-                            {this.state.trabalhando ?
+                            {this.state.idTempo ?
                                 <MaterialIcons name='pause-circle-filled' size={28} color={'#93E1D8'} />
                                 :
                                 <MaterialIcons name='play-circle-filled' size={28} color={'#93E1D8'} />

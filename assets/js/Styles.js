@@ -20,6 +20,9 @@ export default StyleSheet.create({
     buttonText: {
         fontFamily: 'Montserrat-Bold',
         fontSize: 22,
-        color: '#fff'
+        color: '#fff',
+        paddingHorizontal: 5,
+        textAlign: "center",
+        width: '100%'
     }
 });

@@ -36,8 +36,7 @@ class Login extends Component {
                 })
 
                 if (json.status) {
-                    console.log('LOGOU')
-                    this.saveLogin().then(() => {
+                    this.saveLogin(json.id).then(() => {
                         this.props.navigation.navigate('Notas')
                     })
 
@@ -49,11 +48,12 @@ class Login extends Component {
             })
     }
 
-    saveLogin = async () => {
+    saveLogin = async (id) => {
         try {
             login = {
                 equipe: this.state.equipe,
-                senha: this.state.senha
+                senha: this.state.senha,
+                id: id
             }
 
             return AsyncStorage.setItem('login', JSON.stringify(login))

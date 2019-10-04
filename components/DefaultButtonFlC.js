@@ -22,9 +22,11 @@ class DefaultButtonFlC extends Component {
             >
                 <View
                     style={{
-                        paddingHorizontal: 35,
-                        paddingVertical: 15,
+                        flex:1,
+                        // paddingHorizontal: 35,
+                        // paddingVertical: 15,
                         alignItems: 'center',
+                        justifyContent: 'center',
                         backgroundColor: '#93E1D8'
                     }}>
                     <Text style={styles.buttonText}>{this.props.title}</Text>

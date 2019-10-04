@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { Text } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { Text, View } from 'react-native';
 import DefaultButton from './DefaultButton';
-import styles from '../assets/js/Styles';
+import { FontAwesome } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
 
-class DefaultButtonGrP extends Component {
+
+class DefaultButtonSearch extends Component {
 
     constructor(props) {
         super(props);
@@ -18,20 +19,18 @@ class DefaultButtonGrP extends Component {
         return (
             <DefaultButton
                 loading={this.props.loading}
-                style={{ ...this.props.style }}
                 onPress={this.props.onPress}
+                style={{ ...this.props.style,  height: 40, maxHeight: 40,}}
             >
                 <LinearGradient
-                    colors={['#EF8F3B', '#D04B3E']}
+                    colors={['#93E1D8', '#48A9A6']}
                     style={{
-                        flex:1,
+                        flex: 1,
                         alignItems: 'center',
                         justifyContent: 'center',
-                        // paddingHorizontal: 35,
-                        // paddingVertical: 15
                     }}
                     start={[1, 0]} end={[0, 1]}>
-                    <Text style={styles.buttonText}>{this.props.title}</Text>
+                    <FontAwesome name='search' size={22} color='white' />
                 </LinearGradient>
             </DefaultButton>
 
@@ -39,4 +38,4 @@ class DefaultButtonGrP extends Component {
     }
 }
 
-export default DefaultButtonGrP
+export default DefaultButtonSearch

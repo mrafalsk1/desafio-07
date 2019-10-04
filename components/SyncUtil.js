@@ -1,30 +1,44 @@
-
-
+import * as Server from './ServerConfig';
+import * as DBUtil from './DBUtil'
 
 
 export async function sync() {
-    console.log('sincronizando.....')
+  return new Promise((resolve, reject) => {
+    setTimeout(function () {
+      resolve(true)
+    }, 5000);
+  })
+}
 
-    return new Promise((resolve, reject) => {
-        setTimeout(function() {
-          resolve(true)
-        }, 5000);
-      })
-    // return fetch(SERVER + url, {
-    //     method: 'GET',
-    //     headers: {
-    //         Accept: 'application/json',
-    //         'Content-Type': 'application/json',
-    //         'User-Agent': USER_AGENT
-    //     }
-    // })
-    //     .then((response) => {
-    //         return response.json()
-    //     })
-    //     .then((responseJson) => {
-    //         return responseJson
-    //     })
-    //     .catch(error => console.warn(error))
+export async function receber(equipe) {
+  return Server.get('sync/down/' + equipe).then(async (notas) => {
+    return DBUtil.saveNotas(notas)
+  })
+}
+
+export async function enviar(equipe) {
+  const realizados = await DBUtil.getItensRealizados()
+  const tempos = await DBUtil.getTempos()
+
+  console.log('Tempos: ' + tempos.length)
+  console.log(tempos)
+
+  console.log('Realizados: ' + realizados.length)
+  console.log(realizados)
+
+  return Server.post('sync/up/' + equipe, { 'itens': realizados, 'tempos': tempos }).then((res) => {
+    if (res.status) {
+      console.log('OK')
+      DBUtil.clearTempos()
+      DBUtil.deleteRealizados()
+    }
+  })
+}
+
+export async function itensUnc() {
+  return Server.get('sync/itens').then(async (json) => {
+    return DBUtil.saveItensUnc(json)
+  })
 }
 
 

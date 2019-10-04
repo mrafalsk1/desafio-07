@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { FlatList, Text } from 'react-native';
+import { FlatList, ActivityIndicator } from 'react-native';
 import { withNavigation, NavigationEvents } from 'react-navigation';
 import DefaultView from '../components/DefaultView';
 import Ponto from '../components/Ponto';
 import TopMenuBar from '../components/TopMenuBar';
 import styles from '../assets/js/Styles';
+import * as DBUtil from '../components/DBUtil'
 
 
 class Notas extends Component {
@@ -12,40 +13,64 @@ class Notas extends Component {
     constructor(props) {
         super(props);
 
-        // console.log(props.navigation.state.params.nota)
-
         this.state = {
-
-            pontos: [
-                {
-                    key: 'P101',
-                    descricao: 'P101'
-                },
-                {
-                    key: 'P99',
-                    descricao: 'P99'
-                }
-            ]
+            nota: props.navigation.getParam('nota'),
+            loading: false,
+            pontos: []
         }
     }
 
-    componentDidMount() {
-        
-    }
+    onFocus = () => {
+        this.setState({ loading: true })
 
+        DBUtil.getPontos(this.props.navigation.getParam('nota').ag_id).then((pontos) => {
+            pontos.forEach(p => {
+                p.key = p.ap_id + ''
+            });
+
+            this.setState({ pontos: pontos, loading: false })
+        })
+    }
 
     render() {
         return (
-            <DefaultView titulo={this.props.navigation.getParam('nota').numero} voltar={true} >
+            <DefaultView
+                titulo={this.state.nota.nota_id}
+                voltar={true}
+                onFocus={this.onFocus}
+            >
+                {/* {this.state.nota.manha && this.state.nota.tarde ? null :
+                    <View
+                        style={{
+                            position: 'absolute',
+                            height: 30,
+                            width: 100,
+                            right: 0,
+                            top: -50,
+                            borderRadius: 25,
+                            backgroundColor: '#EF8F3B',
+                            justifyContent: "center",
+                            alignItems: "center",
+                        }}
+                    >
+                        <Text style={{
+                            fontFamily: 'Montserrat-Bold',
+                            fontSize: 20,
+                            color: '#FFF'
+                        }}>{this.state.nota.manha ? 'Manhã' : 'Tarde'}</Text>
+                    </View>} */}
 
-                <FlatList
-                style={{
-                    width: '100%'
-                }}
-                    data={this.state.pontos}
-                    renderItem={({ item }) => <Ponto ponto={item} />}
-                />
-
+                {this.state.loading ?
+                    <ActivityIndicator size="large" color="#EF8F3B" /> :
+                    <FlatList
+                        style={{
+                            width: '100%'
+                        }}
+                        showsVerticalScrollIndicator={false}
+                        data={this.state.pontos}
+                        renderItem={({ item }) => <Ponto ponto={item} />}
+                    />
+                }
             </DefaultView>
         );
     }

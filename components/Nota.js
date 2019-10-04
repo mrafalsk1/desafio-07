@@ -9,14 +9,13 @@ class Nota extends Component {
     constructor(props) {
         super(props);
 
-        // console.log(props.nota.numero)
         this.state = {
 
         }
     }
 
-    handlePress=()=>{
-        this.props.navigation.navigate('Pontos', {nota:this.props.nota})
+    handlePress = () => {
+        this.props.navigation.navigate('Pontos', { nota: this.props.nota })
     }
 
 
@@ -42,7 +41,7 @@ class Nota extends Component {
                 activeOpacity={0.5}
                 onPress={this.handlePress}
             >
-                
+
                 <Text
                     style={{
                         fontFamily: 'Montserrat-Bold',
@@ -50,8 +49,9 @@ class Nota extends Component {
                         color: '#EF8F3B',
                         textAlign: 'center',
                     }}
-                >
-                {this.props.nota.numero}</Text>
+                >{this.props.nota.nota_id}</Text>
+                {/* {this.props.nota.nota_id + ' ' + (this.props.nota.manha && this.props.nota.tarde ? 'Manhã/Tarde' :
+                        ((this.props.nota.manha ? 'Manhã' : '') + (this.props.nota.tarde ? 'Tarde' : '')))}</Text> */}
             </TouchableOpacity>
 
         )

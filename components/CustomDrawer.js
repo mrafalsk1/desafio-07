@@ -4,6 +4,7 @@ import { NavigationActions, withNavigation } from 'react-navigation';
 import TopMenuBar from './TopMenuBar';
 import styles from '../assets/js/Styles';
 import { AsyncStorage } from "react-native";
+import * as DBUtil from './DBUtil';
 
 
 export default class CustomDrawer extends Component {
@@ -28,12 +29,9 @@ export default class CustomDrawer extends Component {
     )
 
     sair = async () => {
-        await AsyncStorage.clear().then(() => {
-            console.log('CLEARED')
-            // this.navigateToScreen('Login')
-            this.props.navigation.navigate('Login')
-        })
-
+        await AsyncStorage.clear()
+        // await DBUtil.dropTables()
+        this.props.navigation.navigate('Login')
     }
 
     render() {

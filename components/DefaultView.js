@@ -25,8 +25,8 @@ class DefaultView extends Component {
                 ...this.props.style,
             }}>
                 <NavigationEvents
-                    onDidFocus={this.onFocus}
-                    onWillBlur={this.onBlur}
+                    onDidFocus={this.props.onFocus}
+                    onWillBlur={this.props.onBlur}
                 />
 
                 {/* <TopMenuBar /> */}

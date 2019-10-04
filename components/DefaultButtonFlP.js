@@ -22,9 +22,12 @@ class DefaultButtonFlP extends Component {
             >
                 <View
                     style={{
-                        paddingHorizontal: 35,
-                        paddingVertical: 15,
+                        flex:1,
+                        // width: '100%',
+                        // paddingHorizontal: 35,
+                        // paddingVertical: 15,
                         alignItems: 'center',
+                        justifyContent: 'center',
                         backgroundColor: '#EF8F3B'
                     }}>
                     <Text style={styles.buttonText}>{this.props.title}</Text>
