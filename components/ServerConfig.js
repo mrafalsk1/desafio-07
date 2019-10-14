@@ -1,10 +1,9 @@
 
 
-const SERVER = 'http://10.20.30.134/app/'
 const USER_AGENT = 'ProcelAPP'
 
 export function get(url) {
-    return fetch(SERVER + url, {
+    return fetch(global.server + url, {
         method: 'GET',
         headers: {
             Accept: 'application/json',
@@ -22,7 +21,7 @@ export function get(url) {
 }
 
 export function post(url, params) {
-    return fetch(SERVER + url, {
+    return fetch(global.server + url, {
         method: 'POST',
         headers: {
             Accept: 'application/json',

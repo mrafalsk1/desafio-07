@@ -62,7 +62,7 @@ export async function saveNotas(notas) {
       tx => {
         tx.executeSql('delete from notas');
         notas.forEach(n => {
-          tx.executeSql('insert into notas (ag_id, nota_id, data_ag, manha, tarde) values (?, ?, ?, ?, ?)', [n.ag_id, n.nota, n.data_ag, n.manha, n.tarde]);
+          tx.executeSql('insert into notas (ag_id, nota_id, data_ag, manha, tarde) values (?, ?, ?, ?, ?)', [n.ag_id, n.nota, n.data_ag, n.manha ? 1 : 0, n.tarde ? 1 : 0]);
 
           n.pontos.forEach(p => {
             tx.executeSql('insert into pontos (ap_id, ponto_id, descricao, nota_id, ag_id) values (?, ?, ?, ?, ?)', [p.ap_id, p.id, p.ponto, n.nota, n.ag_id]);
@@ -84,7 +84,7 @@ export async function getNotas(turno) {
     getDB().transaction(
       tx => {
         tx.executeSql('select * from notas where '
-          + (turno == 'am' ? 'manha=1' : 'tarde==1')
+          + (turno == 'am' ? 'manha=1' : 'tarde=1')
           + ' order by manha desc, tarde desc', [], (_, { rows }) => resolve(rows._array), reject)
       },
       (e) => { reject(e) }

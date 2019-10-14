@@ -24,6 +24,9 @@ class App extends Component {
   constructor(props) {
     super(props);
 
+    const rc = Constants.manifest.releaseChannel
+    global.server =  rc && rc.indexOf('prod') !== -1 ? 'http://procel.nuvoni.com.br/app/' : 'http://10.20.30.134/app/'
+
     // this.clearStorage()
 
     let navigatorRef
