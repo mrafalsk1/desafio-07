@@ -6,6 +6,7 @@ import DefaultButtonFlC from '../components/DefaultButtonFlC';
 import * as SyncUtil from '../components/SyncUtil';
 import DefaultInput from '../components/DefaultInput';
 import * as DBUtil from '../components/DBUtil'
+import SwitchSelector from "react-native-switch-selector"
 
 
 class EditItem extends Component {
@@ -56,7 +57,7 @@ class EditItem extends Component {
                             fontSize: 18,
                             color: '#4B4B46',
                             marginVertical: 10
-                        }}>Previsto: {this.state.item.qt}</Text> : null}
+                        }}>Previsto {this.state.item.operacao}: {this.state.item.qt}</Text> : null}
 
                     < Text style={{
                         fontFamily: 'OpenSans',
@@ -66,7 +67,7 @@ class EditItem extends Component {
 
                     <DefaultInput
                         style={{
-                            marginVertical: 5
+                            marginVertical: 10
                         }}
                         keyboardType='numeric'
                         // value={ String(this.state.item.qtr ? this.state.item.qtr : this.state.item.qt) }
@@ -79,6 +80,31 @@ class EditItem extends Component {
                             })
                         }}
                     />
+
+                    {this.state.novo ?
+                        <SwitchSelector
+                            style={{
+                                marginVertical: 5
+                            }}
+                            hasPadding
+                            buttonColor='#EF8F3B'
+                            borderColor='#E4DFDA'
+                            textStyle={{ fontFamily: 'OpenSans', fontSize: 16 }}
+                            selectedTextStyle={{ fontFamily: 'OpenSans', fontSize: 16 }}
+                            initial={this.state.item.operacao == 'RETIRAR' ? 1 : 0}
+                            options={[
+                                { label: "Instalar", value: "INSTALAR" },
+                                { label: "Retirar", value: "RETIRAR" }
+                            ]}
+                            onPress={value => {
+                                item = this.state.item
+                                item.operacao = value
+                                this.setState({
+                                    item: item
+                                })
+                            }}
+                        />
+                        : null}
                 </View>
 
                 <DefaultButtonFlC

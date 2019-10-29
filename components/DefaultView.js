@@ -4,7 +4,6 @@ import { View, BackHandler } from 'react-native';
 import { withNavigation, NavigationEvents } from 'react-navigation';
 import styles from '../assets/js/Styles';
 import Titulo from './Titulo';
-import TopMenuBar from './TopMenuBar';
 
 class DefaultView extends Component {
 

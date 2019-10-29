@@ -42,12 +42,24 @@ export async function prepareDB() {
         );
 
         tx.executeSql(
-          'create table if not exists itens_ponto (id biginteger not null, ponto_id biginteger not null, ap_id biginteger not null, descricao text not null, qt double, operacao text, qtr double, realizado tinyint default 0, PRIMARY KEY(id, ap_id), FOREIGN KEY(ap_id) REFERENCES pontos(ap_id) ON DELETE CASCADE);'
+          'create table if not exists itens_ponto (id biginteger not null, ponto_id biginteger not null, ap_id biginteger not null, descricao text not null, qt double, operacao text, qtr double, realizado tinyint default 0, FOREIGN KEY(ap_id) REFERENCES pontos(ap_id) ON DELETE CASCADE);'
         );
 
         tx.executeSql(
           "create table if not exists tempos (id biginteger primary key not null, inicio datetime DEFAULT (datetime('now','localtime')) not null, fim datetime, ap_id biginteger not null, FOREIGN KEY(ap_id) REFERENCES pontos(ap_id) ON DELETE CASCADE);"
         );
+      },
+      (e) => { reject(e) },
+      () => { resolve(true) }
+    );
+  })
+}
+
+export async function deleteNotas() {
+  return new Promise((resolve, reject) => {
+    getDB().transaction(
+      tx => {
+        tx.executeSql('delete from notas');
       },
       (e) => { reject(e) },
       () => { resolve(true) }
@@ -68,6 +80,7 @@ export async function saveNotas(notas) {
             tx.executeSql('insert into pontos (ap_id, ponto_id, descricao, nota_id, ag_id) values (?, ?, ?, ?, ?)', [p.ap_id, p.id, p.ponto, n.nota, n.ag_id]);
 
             p.itens.forEach(i => {
+              // console.log(i.id+' - '+p.id+' - '+i.ap_id +'      -- '+i.item)
               tx.executeSql('insert into itens_ponto (id, ponto_id, ap_id, descricao, qt, operacao) values (?, ?, ?, ?, ?, ?)', [i.id, p.id, i.ap_id, i.item, i.qt, i.operacao]);
             });
           });
@@ -206,7 +219,7 @@ export async function getItensRealizados() {
   return new Promise((resolve, reject) => {
     getDB().transaction(
       tx => {
-        tx.executeSql("select id as item_unc_id, ap_id as agendamento_ponto_id, qtr as qt from itens_ponto where realizado==1 order by ap_id", [], (_, { rows }) => resolve(rows._array), reject)
+        tx.executeSql("select id as item_unc_id, ap_id as agendamento_ponto_id, qtr as qt, operacao from itens_ponto where realizado==1 order by ap_id", [], (_, { rows }) => resolve(rows._array), reject)
       },
       (e) => reject(e)
     );
@@ -235,7 +248,7 @@ export async function saveItensUnc(itens) {
           tx.executeSql('insert into itens (id, descricao) values (?, ?)', [it.id, it.descricao]);
         });
       },
-      (e) => reject(e),
+      reject,
       () => { resolve(true) }
     );
   })

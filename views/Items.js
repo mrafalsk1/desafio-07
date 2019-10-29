@@ -24,7 +24,7 @@ class Notas extends Component {
 
         DBUtil.getItensPonto(this.props.navigation.getParam('ponto').ap_id).then((itens) => {
             itens.forEach(i => {
-                i.key = i.id + ''
+                i.key = i.id + '' + i.operacao
             });
 
             this.setState({ itens: itens, loading: false })

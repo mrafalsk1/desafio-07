@@ -3,7 +3,6 @@ import { FlatList, ActivityIndicator } from 'react-native';
 import { withNavigation, NavigationEvents } from 'react-navigation';
 import DefaultView from '../components/DefaultView';
 import Ponto from '../components/Ponto';
-import TopMenuBar from '../components/TopMenuBar';
 import styles from '../assets/js/Styles';
 import * as DBUtil from '../components/DBUtil'
 

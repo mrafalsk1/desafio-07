@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import { Alert } from 'react-native';
+import { Alert, Text, View } from 'react-native';
 import { withNavigation } from 'react-navigation';
 import DefaultView from '../components/DefaultView';
 import DefaultButtonFlP from '../components/DefaultButtonFlP';
+import DefaultButtonOK from '../components/DefaultButtonOK';
 import * as SyncUtil from '../components/SyncUtil';
 import { AsyncStorage } from "react-native"
 import * as DBUtil from '../components/DBUtil'
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 
 
@@ -18,6 +20,8 @@ class Sincronismo extends Component {
             enviar: false,
             receber: false,
             unc: false,
+            erro: null,
+            sucesso: null,
             idEquipe: null
         }
     }
@@ -31,7 +35,6 @@ class Sincronismo extends Component {
             })
         }
     }
-
 
     enviarCheck = async () => {
         const temposAbertos = await DBUtil.hasTemposAbertos()
@@ -52,19 +55,22 @@ class Sincronismo extends Component {
 
     enviar = () => {
         this.setState({
-            enviar: true
+            enviar: true,
+            erro: null
         })
         SyncUtil.enviar(this.state.idEquipe).then(() => {
             this.setState({
-                enviar: false
+                enviar: false,
+                sucesso: 'Dados enviados com sucesso!'
             })
-        })
+        }).catch(e => this.setState({ enviar: false, erro: 'Não foi possível enviar os dados, tente novamente mais tarde.' }))
     }
 
 
     receber = async () => {
         this.setState({
-            receber: true
+            receber: true,
+            erro: null
         })
         const dadosNaoSincronizados = await DBUtil.hasItensSinc()
         if (dadosNaoSincronizados) {
@@ -87,56 +93,97 @@ class Sincronismo extends Component {
     receberMESMO = () => {
         SyncUtil.receber(this.state.idEquipe).then(() => {
             this.setState({
-                receber: false
+                receber: false,
+                sucesso: 'Dados atualizados!'
             })
-        })
+        }).catch(e => {console.error(e); this.setState({ receber: false, erro: 'Não foi possível atualizar as informações.' })})
     }
 
     unc = () => {
         this.setState({
-            unc: true
+            unc: true,
+            erro: null
         })
         SyncUtil.itensUnc().then((res) => {
             this.setState({
-                unc: false
+                unc: false,
+                sucesso: 'Tabela de UNCs atualizada!'
             })
-        })
+        }).catch(e => this.setState({ unc: false, erro: 'Não foi possível atualizar as UNCs.' }))
     }
 
     render() {
-        return (
-            <DefaultView titulo='Sincronização'>
-                <DefaultButtonFlP
-                    title='Receber Dados'
-                    style={{
-                        width: '80%',
-                        marginVertical: 10
-                    }}
-                    onPress={this.receber}
-                    loading={this.state.receber}
-                />
+        if (!this.state.erro && !this.state.sucesso) {
+            return (
+                <DefaultView titulo='Sincronização'>
+                    <DefaultButtonFlP
+                        title='Receber Dados'
+                        style={{
+                            width: '80%',
+                            marginVertical: 10
+                        }}
+                        onPress={this.receber}
+                        loading={this.state.receber}
+                    />
 
-                <DefaultButtonFlP
-                    title='Enviar Dados'
-                    style={{
-                        width: '80%',
-                        marginVertical: 10
-                    }}
-                    onPress={this.enviarCheck}
-                    loading={this.state.enviar}
-                />
+                    <DefaultButtonFlP
+                        title='Enviar Dados'
+                        style={{
+                            width: '80%',
+                            marginVertical: 10
+                        }}
+                        onPress={this.enviarCheck}
+                        loading={this.state.enviar}
+                    />
 
-                <DefaultButtonFlP
-                    title='Atualizar UNCs'
-                    style={{
-                        width: '80%',
-                        marginVertical: 10
-                    }}
-                    onPress={this.unc}
-                    loading={this.state.unc}
-                />
-            </DefaultView>
-        );
+                    <DefaultButtonFlP
+                        title='Atualizar UNCs'
+                        style={{
+                            width: '80%',
+                            marginVertical: 10
+                        }}
+                        onPress={this.unc}
+                        loading={this.state.unc}
+                    />
+                </DefaultView>
+            )
+        } else {
+            const color = this.state.erro ? '#D04B3E' : '#48A9A6'
+
+            const font = {
+                width: '100%',
+                fontFamily: 'OpenSans',
+                fontSize: 20,
+                color: color,
+                textAlign: 'center',
+                marginTop: '10%',
+                marginBottom: '15%',
+            }
+
+            return (
+                <DefaultView titulo='Sincronização'>
+                    <MaterialCommunityIcons
+                        name={this.state.erro ? 'alert-circle-outline' : 'checkbox-marked-circle-outline'}
+                        size={80} color={color}
+                        style={{
+                            marginTop: '15%'
+                        }} />
+
+                    <Text style={font}>{this.state.erro ? this.state.erro : this.state.sucesso}</Text>
+
+                    <DefaultButtonOK
+                        style={{
+                            width: '80%',
+                            marginVertical: 10
+                        }}
+                        onPress={()=>this.setState({
+                            erro: null,
+                            sucesso: null
+                        })}
+                    />
+                </DefaultView>
+            )
+        }
     }
 }
 

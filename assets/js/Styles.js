@@ -17,6 +17,18 @@ export default StyleSheet.create({
         padding: 25
     },
 
+    menuEquipe: {
+        fontFamily: 'OpenSans',
+        fontSize: 16,
+        color: '#141204'
+    },
+
+    menuVersion: {
+        fontFamily: 'OpenSans',
+        fontSize: 16,
+        color: '#CECECE',
+    },
+
     buttonText: {
         fontFamily: 'Montserrat-Bold',
         fontSize: 22,

@@ -4,7 +4,7 @@ import DefaultButton from './DefaultButton';
 import styles from '../assets/js/Styles';
 
 
-class DefaultButtonFlP extends Component {
+class DefaultButtonOK extends Component {
 
     constructor(props) {
         super(props);
@@ -23,9 +23,9 @@ class DefaultButtonFlP extends Component {
                         flex:1,
                         alignItems: 'center',
                         justifyContent: 'center',
-                        backgroundColor: '#EF8F3B'
+                        backgroundColor: '#759FBC'
                     }}>
-                    <Text style={styles.buttonText}>{this.props.title}</Text>
+                    <Text style={styles.buttonText}>OK</Text>
                 </View>
             </DefaultButton>
 
@@ -33,4 +33,4 @@ class DefaultButtonFlP extends Component {
     }
 }
 
-export default DefaultButtonFlP
+export default DefaultButtonOK

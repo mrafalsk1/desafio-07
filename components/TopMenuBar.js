@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity, Text } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 import { withNavigation, DrawerActions } from 'react-navigation'
+import Constants from 'expo-constants';
+import styles from '../assets/js/Styles';
+
 
 class TopMenuBar extends Component {
 
@@ -39,13 +42,14 @@ class TopMenuBar extends Component {
                 alignItems: 'center',
                 flexDirection: 'row',
             }}>
-                {/* <View
+                <View
                     style={{
                         flex: 1,
                         flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'center'
                     }}
-                > */}
-
+                >
                     <TouchableOpacity
                         activeOpacity={0.5}
                         style={{
@@ -58,7 +62,11 @@ class TopMenuBar extends Component {
                             }}
                         />
                     </TouchableOpacity>
-                {/* </View> */}
+
+                    {this.props.version ?
+                        <Text style={styles.menuVersion}>{Constants.manifest.version}</Text>
+                        : null}
+                </View>
 
                 {/* <View
                     style={{

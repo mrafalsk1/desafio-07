@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Alert } from 'react-native';
 import { NavigationActions, withNavigation } from 'react-navigation';
 import TopMenuBar from './TopMenuBar';
 import styles from '../assets/js/Styles';
@@ -28,9 +28,22 @@ export default class CustomDrawer extends Component {
         }
     )
 
-    sair = async () => {
+    sair = () => {
+        Alert.alert(
+            'Aviso',
+            'Todos os dados locais serão removidos, deseja prosseguir?',
+            [
+                { text: 'Cancelar', style: 'cancel'},
+                { text: 'OK', onPress: () => this.clear() },
+            ],
+            { cancelable: true }
+        );
+    }
+
+    clear = async () => {
+
         await AsyncStorage.clear()
-        // await DBUtil.dropTables()
+        await DBUtil.deleteNotas();
         this.props.navigation.navigate('Login')
     }
 
@@ -40,7 +53,7 @@ export default class CustomDrawer extends Component {
                 flex: 1,
                 backgroundColor: '#FFF'
             }}>
-                <TopMenuBar />
+                <TopMenuBar version={true}/>
 
                 <View style={{
                     ...styles.defaultPadding,
@@ -69,14 +82,14 @@ export default class CustomDrawer extends Component {
 
 
                     <View style={{
-                        flex: 2,
                         flexDirection: 'row',
-                        alignItems: 'flex-end',
-                        justifyContent: 'flex-end',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
                         width: '100%',
 
-                        paddingBottom: 30
+                        paddingBottom: 30,
                     }}>
+                        <Text style={styles.menuEquipe}>{global.equipe}</Text>
                         <TouchableOpacity
                             activeOpacity={0.5}
                             onPress={this.sair}>

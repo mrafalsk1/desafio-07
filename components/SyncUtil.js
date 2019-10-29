@@ -20,12 +20,6 @@ export async function enviar(equipe) {
   const realizados = await DBUtil.getItensRealizados()
   const tempos = await DBUtil.getTempos()
 
-  console.log('Tempos: ' + tempos.length)
-  console.log(tempos)
-
-  console.log('Realizados: ' + realizados.length)
-  console.log(realizados)
-
   return Server.post('sync/up/' + equipe, { 'itens': realizados, 'tempos': tempos }).then((res) => {
     if (res.status) {
       console.log('OK')
@@ -37,6 +31,7 @@ export async function enviar(equipe) {
 
 export async function itensUnc() {
   return Server.get('sync/itens').then(async (json) => {
+    console.log('uncs...')
     return DBUtil.saveItensUnc(json)
   })
 }

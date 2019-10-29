@@ -15,6 +15,8 @@ import TopMenuBar from './components/TopMenuBar';
 import * as Font from 'expo-font';
 import 'react-native-gesture-handler'
 import * as DBUtil from './components/DBUtil';
+import Constants from 'expo-constants';
+
 
 const db = DBUtil.getDB();
 
@@ -25,7 +27,7 @@ class App extends Component {
     super(props);
 
     const rc = Constants.manifest.releaseChannel
-    global.server =  rc && rc.indexOf('prod') !== -1 ? 'http://procel.nuvoni.com.br/app/' : 'http://10.20.30.134/app/'
+    global.server = rc && rc.indexOf('prod') !== -1 ? 'http://procel.nuvoni.com.br/app/' : 'http://10.20.30.134/app/'
 
     // this.clearStorage()
 
@@ -72,6 +74,7 @@ class App extends Component {
     if (login) {
       login = JSON.parse(login)
       if (login.equipe && login.senha) {
+        global.equipe = login.equipe
         initial = 'Recent'
       }
     }
@@ -101,7 +104,7 @@ class App extends Component {
           shadowColor: 'transparent',
         },
         defaultNavigationOptions: {
-          headerLeft: <TopMenuBar />,
+          headerLeft: <TopMenuBar/>,
           headerStyle: {
             elevation: 0,
             shadowOpacity: 0,
