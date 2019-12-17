@@ -258,7 +258,7 @@ export async function buscaItens(termo) {
   return new Promise((resolve, reject) => {
     getDB().transaction(
       tx => {
-        tx.executeSql("select id, id || '' as key, descricao from itens where descricao like ? order by descricao limit 100", ['%' + termo + '%'], (_, { rows }) => resolve(rows._array), reject)
+        tx.executeSql("select id, id || '' as key, descricao from itens where descricao like ? order by descricao limit 500", ['%' + termo + '%'], (_, { rows }) => resolve(rows._array), reject)
       },
       (e) => reject(e)
     );

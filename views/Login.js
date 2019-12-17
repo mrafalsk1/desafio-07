@@ -36,6 +36,7 @@ class Login extends Component {
                 })
 
                 if (json.status) {
+                    global.equipe = this.state.equipe
                     this.saveLogin(json.id).then(() => {
                         this.props.navigation.navigate('Notas')
                     })

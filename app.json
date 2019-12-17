@@ -7,7 +7,7 @@
     "platforms": [
       "android"
     ],
-    "version": "1.0.3",
+    "version": "1.0.4",
     "orientation": "portrait",
     "icon": "./assets/images/logo2.png",
     "splash": {
@@ -23,7 +23,7 @@
     ],
     "android": {
       "package": "br.com.nuvoni.procelapp",
-      "versionCode": 4
+      "versionCode": 5
     }
   }
 }
