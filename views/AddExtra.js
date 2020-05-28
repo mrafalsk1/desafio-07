@@ -49,13 +49,18 @@ class AddExtra extends Component {
             item.realizado = 1
             item.ponto_id = this.state.ponto.ponto_id
             item.ap_id = this.state.ponto.ap_id
+            console.log("here")
             this.props.navigation.navigate('EditItem', { item: item, novo: true })
         }
     }
 
     render() {
         return (
+            
             <DefaultView titulo='Adicionar Extra' voltar={true}>
+            {// tela de adicionar
+            }
+
                 <View
                     style={{
                         flexDirection: "row",
@@ -79,7 +84,6 @@ class AddExtra extends Component {
                         onPress={this.buscar}
                     />
                 </View>
-
                 <FlatList
                     style={{
                         flex: 1,
@@ -87,7 +91,9 @@ class AddExtra extends Component {
                     }}
                     showsVerticalScrollIndicator={false}
                     data={this.state.itens}
+                    
                     renderItem={({ item }) =>
+                    
                         <TouchableHighlight
                             activeOpacity={0.5}
                             underlayColor='#FAFAFA'
@@ -97,7 +103,9 @@ class AddExtra extends Component {
                                 {item.descricao}
                             </Text>
                         </TouchableHighlight>}
+                
                 />
+                
             </DefaultView>
         );
     }

@@ -5,6 +5,9 @@ import DefaultView from '../components/DefaultView';
 import Ponto from '../components/Ponto';
 import styles from '../assets/js/Styles';
 import * as DBUtil from '../components/DBUtil'
+import DefaultInput from '../components/DefaultInput';
+import DefaultButtonSearch from '../components/DefaultButtonSearch';
+
 
 
 class Notas extends Component {
@@ -61,6 +64,7 @@ class Notas extends Component {
 
                 {this.state.loading ?
                     <ActivityIndicator size="large" color="#EF8F3B" /> :
+                    
                     <FlatList
                         style={{
                             width: '100%'
@@ -69,7 +73,9 @@ class Notas extends Component {
                         data={this.state.pontos}
                         renderItem={({ item }) => <Ponto ponto={item} />}
                     />
+                
                 }
+               
             </DefaultView>
         );
     }
