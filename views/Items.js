@@ -26,15 +26,18 @@ class Notas extends Component {
 
 
     onFocus = () => {
-        this.setState({ loading: true })
+        
+        if (this.state.itens.length === 0 || this.state.pesquisa === '') {
+            this.setState({ loading: true })
 
-        DBUtil.getItensPonto(this.props.navigation.getParam('ponto').ap_id).then((itens) => {
-            itens.forEach(i => {
-                i.key = i.id + '' + i.operacao
-            });
+            DBUtil.getItensPonto(this.props.navigation.getParam('ponto').ap_id).then((itens) => {
+                itens.forEach(i => {
+                    i.key = i.id + '' + i.operacao
+                });
 
-            this.setState({ itens: itens, loading: false, todosItens: itens })
-        })
+                this.setState({ itens: itens, loading: false, todosItens: itens })
+            })
+        }
     }
 
 
@@ -91,21 +94,18 @@ class Notas extends Component {
                     }}
                     onPress={() => this.props.navigation.navigate('AddExtra', { ponto: this.props.navigation.getParam('ponto') })}
                 />
-
-
-
             </DefaultView>
         );
     }
 
 
-    buscaDB () {
+    buscaDB() {
         DBUtil.getItensPonto(this.props.navigation.getParam('ponto').ap_id).then((itens) => {
             itens.forEach(i => {
                 i.key = i.id + '' + i.operacao
             });
 
-            this.setState({ itens: itens})
+            this.setState({ itens: itens })
         })
     }
 
@@ -119,22 +119,19 @@ class Notas extends Component {
         }
         if (this.state.pesquisa != '') {
             itens = filterItems(this.state.pesquisa.toString())
-            console.log(this.state.pesquisa.toString())
 
             this.setState({
                 itens: itens
             })
-            console.log(itens.toString())
 
         } else {
             this.setState({ loading: true })
-            console.log(this.state.pesquisa.toString() + "aa")
             DBUtil.getItensPonto(this.props.navigation.getParam('ponto').ap_id).then((itens) => {
                 itens.forEach(i => {
                     i.key = i.id + '' + i.operacao
                 });
-    
-                this.setState({ itens: itens, loading: false})
+
+                this.setState({ itens: itens, loading: false })
             })
         }
 

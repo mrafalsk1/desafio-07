@@ -17,6 +17,7 @@ export async function dropTables() {
         tx.executeSql('drop table if exists itens_ponto')
         tx.executeSql('drop table if exists pontos')
         tx.executeSql('drop table if exists notas')
+        tx.executeSql('drop table if exists categoria')
       },
       (e) => { reject(e) },
       () => { resolve(true) }
@@ -25,14 +26,16 @@ export async function dropTables() {
 }
 
 export async function prepareDB() {
-  // await this.dropTables()
+  //await this.dropTables()
   return new Promise((resolve, reject) => {
     getDB().transaction(
       tx => {
         tx.executeSql(
-          'create table if not exists itens (id biginteger primary key not null, descricao text);'
+          'create table if not exists itens (id biginteger primary key not null, descricao text, categoria text);'
         );
-
+        tx.executeSql(
+          'create table if not exists categoria (categoria text);'
+        );
         tx.executeSql(
           'create table if not exists notas (ag_id biginteger primary key, nota_id biginteger not null, data_ag datetime, manha tinyint, tarde tinyint);'
         );
@@ -80,7 +83,7 @@ export async function saveNotas(notas) {
             tx.executeSql('insert into pontos (ap_id, ponto_id, descricao, nota_id, ag_id) values (?, ?, ?, ?, ?)', [p.ap_id, p.id, p.ponto, n.nota, n.ag_id]);
 
             p.itens.forEach(i => {
-              // console.log(i.id+' - '+p.id+' - '+i.ap_id +'      -- '+i.item)
+               console.log(i.id+' - '+p.id+' - '+i.ap_id +'      -- '+i.item + '  ---  ' + i.qt)
               tx.executeSql('insert into itens_ponto (id, ponto_id, ap_id, descricao, qt, operacao) values (?, ?, ?, ?, ?, ?)', [i.id, p.id, i.ap_id, i.item, i.qt, i.operacao]);
             });
           });
@@ -243,10 +246,15 @@ export async function saveItensUnc(itens) {
     getDB().transaction(
       tx => {
         tx.executeSql('delete from itens');
-
+        tx.executeSql('delete from categoria');
         itens.forEach(it => {
-          tx.executeSql('insert into itens (id, descricao) values (?, ?)', [it.id, it.descricao]);
+          tx.executeSql('insert into itens (id, descricao, categoria) values (?, ?, ?)', [it.id, it.descricao, it.categoria]);
         });
+        const distinctCat = Array.from(new Set(itens.map(x => x.categoria)));
+        distinctCat.sort();
+        for (const cat in distinctCat) {
+          tx.executeSql('insert into categoria (categoria) values (?)', [distinctCat[cat]]);            
+          }
       },
       reject,
       () => { resolve(true) }
@@ -258,7 +266,43 @@ export async function buscaItens(termo) {
   return new Promise((resolve, reject) => {
     getDB().transaction(
       tx => {
-        tx.executeSql("select id, id || '' as key, descricao from itens where descricao like ? order by descricao limit 500", ['%' + termo + '%'], (_, { rows }) => resolve(rows._array), reject)
+        tx.executeSql("select id, id || '' as key, descricao, categoria from itens where descricao like ? and categoria is not null order by descricao limit 500", ['%' + termo + '%'], (_, { rows }) => resolve(rows._array), reject)
+      },
+      (e) => reject(e)
+    );
+  })
+}
+
+export async function buscaPorCategorias(termo) {
+  return new Promise((resolve, reject) => {
+    getDB().transaction(
+      tx => {
+        tx.executeSql("select id, id || '' as key, descricao from itens where categoria like ? order by descricao limit 500", ['%' + termo + '%'], (_, { rows }) => resolve(rows._array), reject)
+      },
+      (e) => reject(e)
+    );
+  })
+}
+
+export async function buscaPorCategoriasFiltro(termo, categoria) {
+ // console.log(termo)
+  //console.log(categoria)
+  return new Promise((resolve, reject) => {
+    getDB().transaction(
+      tx => {
+        tx.executeSql("select id, id || '' as key, descricao from itens where categoria = ?  and categoria is not null and descricao like ? order by descricao limit 500", [categoria, '%' + termo + '%'], (_, { rows }) => resolve(rows._array), reject)
+      },
+      (e) => reject(e)
+    );
+
+  })
+}
+
+export async function buscaCategorias() {
+  return new Promise((resolve, reject) => {
+    getDB().transaction(
+      tx => {
+        tx.executeSql("SELECT DISTINCT categoria from categoria order by categoria", [], (_, { rows }) => resolve(rows._array), reject)
       },
       (e) => reject(e)
     );

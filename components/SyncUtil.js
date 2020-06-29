@@ -32,9 +32,11 @@ export async function enviar(equipe) {
 export async function itensUnc() {
   return Server.get('sync/itens').then(async (json) => {
     console.log('uncs...')
+    //console.log(json)
     return DBUtil.saveItensUnc(json)
   })
 }
+
 
 
 export { };

@@ -94,6 +94,7 @@ class Item extends Component {
                                 }}
                             >
                                 {'Prev/Realizado: '}
+                                
                             </Text>
                             <Text
                                 style={{
@@ -103,6 +104,7 @@ class Item extends Component {
                                 }}
                             >
                                 {this.state.item.qt + '/' + (this.state.item.qtr ? this.state.item.qtr : '**')}
+                               
                             </Text>
                         </View>
 

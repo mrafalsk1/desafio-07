@@ -27,7 +27,8 @@ class EditItem extends Component {
                 this.props.navigation.goBack()
             } else {
                 await DBUtil.addItemRealizado(this.state.item)
-                this.props.navigation.pop(2)
+                this.props.navigation.pop(1)
+                // adicionar notificação que foi adicionado ou não limpar a tela
             }
         }
     }
