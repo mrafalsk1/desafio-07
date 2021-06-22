@@ -59,7 +59,7 @@ export async function saveItens(itens) {
           // tx.executeSql('if not exists(select * from itens where it_id = ?) begin insert into itens (it_id, descricao, us_instalar, us_retirar, us_substituir) values '
           //   + '(?, ?, ?, ?, ?)'select * from itens, [it.id,it.id,it.descricao, it.us_instalar, it.us_retirar, it.us_substituir])
           tx.executeSql('insert or ignore into itens(it_id, descricao, us_instalar, us_retirar, us_substituir) values (?, ?, ?, ?, ?)', [it._id, it.descricao, it.us_instalar, it.us_retirar, it.us_substituir])
-          tx.executeSql('insert or ignore into quantidades(qt_id,item_id,equipe_id) values (?, ?)', [uuid.v4(), it._id])
+          tx.executeSql('insert or ignore into quantidades(qt_id,item_id) values (?, ?)', [uuid.v4(), it._id])
         })
       },
       (e) => { reject(e) },

@@ -67,25 +67,44 @@ class Items extends Component {
         //         })
         //     })
         // })
-        if (this.props.route.params) {
-            console.log('aqul pelo login');
-            console.log(this.props.route.params.itens);
-            this.setState({
-                itens: this.props.route.params.itens,
-                todosItens: this.props.route.params.itens,
-                loading: false
-            })
-            console.log('passo');
-        } else {
-            DBUtil.getItens().then((itens) => {
-                console.log('??????');
-                this.setState({
-                    itens: itens,
-                    todosItens: itens,
-                    loading: false
+        NetInfo.fetch().then(state => {
+            if (state) {
+                if (this.props.route.params) {
+                    console.log('aqul pelo login');
+                    console.log(this.props.route.params.itens);
+                    this.setState({
+                        itens: this.props.route.params.itens,
+                        todosItens: this.props.route.params.itens,
+                        loading: false
+                    })
+                    console.log('passo');
+                } else {
+                    AsyncStorage.getItem('token').then(token => {
+                        Server.get('item', token).then(response => {
+                            DBUtil.saveItens(response).then(response => {
+                                DBUtil.getItens().then((itens) => {
+                                    this.setState({
+                                        itens: itens,
+                                        todosItens: itens,
+                                        loading: false,
+                                    })
+                                })
+                            })
+                        });
+                    })
+
+                }
+            } else {
+                DBUtil.getItens().then((itens) => {
+                    this.setState({
+                        itens: itens,
+                        todosItens: itens,
+                        loading: false,
+                    })
                 })
-            })
-        }
+            }
+        })
+
 
 
 
