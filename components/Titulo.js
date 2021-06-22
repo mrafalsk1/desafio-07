@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Text, View, TouchableOpacity } from 'react-native';
-import { withNavigation  } from 'react-navigation';
 import { AntDesign } from '@expo/vector-icons';
 
 class Titulo extends Component {
@@ -72,4 +71,4 @@ class Titulo extends Component {
     }
 }
 
-export default withNavigation(Titulo)
+export default Titulo;

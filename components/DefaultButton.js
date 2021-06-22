@@ -13,6 +13,7 @@ class DefaultButtonGrP extends Component {
     render() {
         return (
             <TouchableOpacity
+                onPress={this.props.onPress}
                 style={{
                     flex:1,
                     flexDirection: 'row',
@@ -37,6 +38,7 @@ class DefaultButtonGrP extends Component {
                             // paddingVertical: 18,
                         }} />
                     :
+                    
                     this.props.children
                 }
             </TouchableOpacity>

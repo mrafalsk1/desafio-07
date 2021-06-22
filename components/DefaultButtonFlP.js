@@ -16,14 +16,14 @@ class DefaultButtonFlP extends Component {
             <DefaultButton
                 loading={this.props.loading}
                 onPress={this.props.onPress}
-                style={{ ...this.props.style }}
+                style={{ ...this.props.style, height:40, maxHeight:40}}
             >
                 <View
                     style={{
                         flex:1,
                         alignItems: 'center',
                         justifyContent: 'center',
-                        backgroundColor: '#EF8F3B'
+                        backgroundColor: '#EF8F3B',
                     }}>
                     <Text style={styles.buttonText}>{this.props.title}</Text>
                 </View>

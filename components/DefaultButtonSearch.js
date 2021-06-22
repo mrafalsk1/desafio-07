@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Text, View } from 'react-native';
 import DefaultButton from './DefaultButton';
 import { FontAwesome } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -20,7 +19,7 @@ class DefaultButtonSearch extends Component {
             <DefaultButton
                 loading={this.props.loading}
                 onPress={this.props.onPress}
-                style={{ ...this.props.style,  height: 40, maxHeight: 40,}}
+                style={{ ...this.props.style, height: 40, maxHeight: 40, borderRadius: 100, width: 50 }}
             >
                 <LinearGradient
                     colors={['#93E1D8', '#48A9A6']}

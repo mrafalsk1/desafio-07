@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 
-import { View, BackHandler } from 'react-native';
-import { withNavigation, NavigationEvents } from 'react-navigation';
+import { View } from 'react-native';
 import styles from '../assets/js/Styles';
 import Titulo from './Titulo';
 
@@ -55,4 +54,4 @@ class DefaultView extends Component {
     };
 }
 
-export default withNavigation(DefaultView);
+export default DefaultView

@@ -1,24 +1,27 @@
-import React, { Component } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { NavigationActions, createAppContainer, createDrawerNavigator, createStackNavigator } from 'react-navigation';
-import { AsyncStorage } from "react-native";
-import { AppLoading } from 'expo';
-import Login from './views/Login';
-import Notas from './views/Notas';
-import Pontos from './views/Pontos';
-import Items from './views/Items';
-import AddExtra from './views/AddExtra';
-import EditItem from './views/EditItem';
-import Sincronismo from './views/Sincronismo';
-import CustomDrawer from './components/CustomDrawer';
-import TopMenuBar from './components/TopMenuBar';
-import * as Font from 'expo-font';
 import 'react-native-gesture-handler'
-import * as DBUtil from './components/DBUtil';
+import React, { Component } from 'react';
+import AppLoading from 'expo-app-loading';
+import * as Font from 'expo-font';
 import Constants from 'expo-constants';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import NetInfo from '@react-native-community/netinfo'
 
-const db = DBUtil.getDB();
+import { NavigationContainer, } from '@react-navigation/native';
+import { createDrawerNavigator, DrawerContent } from '@react-navigation/drawer';
+
+import { navigationRef } from './assets/js/RootNavigation';
+
+import Items from './views/Items';
+import Login from './views/Login';
+
+import CustomDrawer from './components/CustomDrawer';
+import * as Server from './components/ServerConfig';
+import * as DBUtil from './components/DBUtil';
+
+
+
+
 
 
 class App extends Component {
@@ -27,14 +30,14 @@ class App extends Component {
     super(props);
 
     const rc = Constants.manifest.releaseChannel
-    global.server = rc && rc.indexOf('prod') !== -1 ? 'http://procel.nuvoni.com.br/app/' : 'http://10.20.30.134/app/'
+    global.server = rc && rc.indexOf('prod') !== -1 ? 'http://procel.nuvoni.com.br/app/' : 'http://192.168.0.82:3000/'
+    // global.server = rc && rc.indexOf('prod') !== -1 ? 'http://procel.nuvoni.com.br/app/' : 'http://192.168.0.82/app/'
 
     // this.clearStorage()
 
-    let navigatorRef
     this.state = {
-      appContainer: null,
       loading: true,
+      initial: '',
     }
   }
 
@@ -68,34 +71,43 @@ class App extends Component {
     })
 
     console.log('>>>> CHECK LOGIN')
-    let login = await AsyncStorage.getItem('login')
+    await AsyncStorage.getItem('token').then((values) => {
+      this.setState({
+        initial: 'Login'
+      })
+      console.log('values');
+      console.log(values);
+      if (values) {
+        console.log('?????????');
+        this.setState({
+          initial: 'Items',
+        })
 
-    let initial = 'Login'
-    if (login) {
-      login = JSON.parse(login)
-      if (login.equipe && login.senha) {
+
         global.equipe = login.equipe
-        initial = 'Recent'
       }
-    }
+    })
+    // if (login) {
+    //   login = JSON.parse(login)
+    //   if (login.equipe && login.senha) {
+    //     global.equipe = login.equipe
+    //     this.setState({
+    //       initial: 'Items'
+    //     })
+    //   }
+    // }
 
     this.setState({
-      appContainer: this.createDrawer(initial),
       loading: false
     })
   }
 
-  createDrawer = (initial) => {
-    const stack = createStackNavigator({
-      Notas: { screen: Notas },
-      Pontos: { screen: Pontos },
+  /*createDrawer = () => {
+    /*const stack = createStackNavigator({
       Items: { screen: Items },
-      Sincronismo: { screen: Sincronismo },
-      AddExtra: { screen: AddExtra },
-      EditItem: { screen: EditItem }
     },
       {
-        initialRouteName: 'Notas',
+        initialRouteName: 'Items',
         headerMode: 'float',
         // mode: 'modal',
         cardShadowEnabled: false,
@@ -111,42 +123,62 @@ class App extends Component {
             borderBottomWidth: 0
           }
         }
-      });
+      });*/
+  /*const stack = createStackNavigator();
+  return (
+    <stack.Navigator screenOptions={{ headerShown: false }}>
+      <stack.Screen name="Login" component={Login} />
+    </stack.Navigator>
+  )*/
 
 
-    const drawer = createDrawerNavigator({
-      Login: {
-        screen: Login,
-        navigationOptions: {
-          drawerLockMode: 'locked-closed'
-        }
-      },
-      Recent: {
-        screen: stack
+  /*const drawer = createDrawerNavigator({
+    Login: {
+      screen: Login,
+      navigationOptions: {
+        drawerLockMode: 'locked-closed'
       }
     },
-      {
-        initialRouteName: initial,
-        // initialRouteParams: params,
-        contentComponent: CustomDrawer,
-        // drawerWidth: width,
-        drawerBackgroundColor: "transparent",
-        backBehavior: 'none'
-      }
-    );
+    Recent: {
+      screen: stack
+    }
+  },
+    {
+      initialRouteName: initial,
+      // initialRouteParams: params,
+      contentComponent: CustomDrawer,
+      // drawerWidth: width,
+      drawerBackgroundColor: "transparent",
+      backBehavior: 'none'
+    }
+  );
 
-    return createAppContainer(drawer)
-  }
+  return createAppContainer(drawer)
+}*/
 
   render() {
-    if (this.state.loading || !this.state.appContainer) {
+    console.log(this.state.initial);
+    if (this.state.loading) {
       return <AppLoading
         startAsync={this.checkData}
         onFinish={() => this.setState({ loading: false })}
+        onError={() => console.warn}
       />
     }
-
-    return <this.state.appContainer ref={ref => this.navigatorRef = ref} />;
+    const { Navigator, Screen } = createDrawerNavigator();
+    return (
+      <NavigationContainer ref={navigationRef}>
+        <Navigator initialRouteName={this.state.initial} screenOptions={{ headerShown: false }} drawerContent={() => <CustomDrawer />}>
+          <Screen name="Login" component={Login}></Screen>
+          <Screen name="Items" component={Items}></Screen>
+        </Navigator>
+      </NavigationContainer>
+    );
+    /* <NavigationContainer>
+     <Stack.Navigator initialRouteName="Login">
+       <Stack.Screen name="Login" component={Login} />
+     </Stack.Navigator>
+   </NavigationContainer>*/
   }
 
 }

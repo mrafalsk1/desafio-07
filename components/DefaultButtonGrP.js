@@ -24,15 +24,17 @@ class DefaultButtonGrP extends Component {
                 <LinearGradient
                     colors={['#EF8F3B', '#D04B3E']}
                     style={{
-                        flex:1,
+                        flex: 1,
                         alignItems: 'center',
                         justifyContent: 'center',
                         // paddingHorizontal: 35,
                         // paddingVertical: 15
                     }}
                     start={[1, 0]} end={[0, 1]}>
+
                     <Text style={styles.buttonText}>{this.props.title}</Text>
                 </LinearGradient>
+
             </DefaultButton>
 
         )

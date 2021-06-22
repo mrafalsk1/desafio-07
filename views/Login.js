@@ -1,13 +1,17 @@
 import React, { Component } from 'react';
-import { Text, View, Image } from 'react-native';
-import { withNavigation, NavigationEvents } from 'react-navigation';
+import { Text, View, Image, ScrollView } from 'react-native';
+import { useNavigation } from '@react-navigation/native'
+import NetInfo from '@react-native-community/netinfo'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import Titulo from '../components/Titulo';
 import DefaultInput from '../components/DefaultInput';
 import DefaultButtonGrP from '../components/DefaultButtonGrP';
+
+import * as DBUtil from '../components/DBUtil'
 import * as Server from '../components/ServerConfig';
+
 import styles from '../assets/js/Styles';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { AsyncStorage } from "react-native"
 
 class Login extends Component {
 
@@ -16,29 +20,51 @@ class Login extends Component {
 
         this.state = {
             equipe: '',
-            senha: '',
+            password: '',
             erro: false,
             loading: false
         }
     }
+    componentDidMount = () => {
 
-    login = () => {
+    }
+    login = async () => {
         console.log('logando')
         this.setState({
             erro: false,
             loading: true
         })
-        Server.post('equipe/login',
-            { equipe: this.state.equipe, senha: this.state.senha })
+        await Server.post('auth/app',
+            { equipe: this.state.equipe, password: this.state.password })
             .then(json => {
+                console.log(json);
                 this.setState({
                     loading: false
                 })
+                if (json.token) {
+                    global.equipe = json.equipe
+                    this.saveLogin(json.equipe, json.equipe._id, json.token).then(() => {
 
-                if (json.status) {
-                    global.equipe = this.state.equipe
-                    this.saveLogin(json.id).then(() => {
-                        this.props.navigation.navigate('Notas')
+                        NetInfo.fetch().then(state => {
+                            if (state.isConnected) {
+                                //baixar os itens do banco
+                                Server.get('item', json.token).then(response => {
+                                    DBUtil.saveItens(response).then(response => {
+                                        DBUtil.getItens().then((itens) => {
+                                            this.setState({
+                                                equipe: '',
+                                                password: '',
+                                            })
+                                            this.props.navigation.navigate('Items', {
+                                                itens: itens,
+                                            })
+                                        })
+                                    })
+                                });
+                            }
+                        })
+
+
                     })
 
                 } else {
@@ -49,44 +75,60 @@ class Login extends Component {
             })
     }
 
-    saveLogin = async (id) => {
+    saveLogin = async (equipe, id, token) => {
         try {
-            login = {
-                equipe: this.state.equipe,
-                senha: this.state.senha,
-                id: id
+            user = {
+                equipe: equipe,
+                password: this.state.password,
+                id: id,
             }
-
-            return AsyncStorage.setItem('login', JSON.stringify(login))
+            AsyncStorage.setItem('responsavel', equipe.responsavel)
+            AsyncStorage.setItem('descricao', equipe.descricao)
+            AsyncStorage.setItem('token', token)
+            AsyncStorage.setItem('idEquipe', id)
+            
+            return;
         } catch (e) { }
     }
 
     onFocus = () => {
         this.setState({
             equipe: '',
-            senha: '',
+            password: '',
             erro: false,
             loading: false
         })
     }
-
     render() {
+
         return (
-            <KeyboardAwareScrollView enableOnAndroid scrollEnabled
-                keyboardShouldPersistTaps="handled"
-                extraScrollHeight={50}
+            /* <KeyboardAwareScrollView enableOnAndroid scrollEnabled
+                 keyboardShouldPersistTaps="handled"
+                 extraScrollHeight={50}
+                 contentContainerStyle={{
+                     ...styles.defaultPadding,
+                     ...styles.defaultBgColor,
+                     flexGrow: 1,
+                     width: '100%',
+                     flexDirection: 'column',
+                     alignItems: 'stretch'
+                 }}>*/
+            <ScrollView
                 contentContainerStyle={{
                     ...styles.defaultPadding,
                     ...styles.defaultBgColor,
                     flexGrow: 1,
                     width: '100%',
                     flexDirection: 'column',
-                    alignItems: 'stretch'
-                }}>
+                    alignItems: 'stretch',
+                }
+                }
+                keyboardShouldPersistTaps={'handled'}
+                alwaysBounceVertical={true}
+                minimumZoomScale={2}
 
-                <NavigationEvents
-                    onDidFocus={this.onFocus}
-                />
+            >
+
 
                 <Titulo style={{ marginTop: 100 }}>Login</Titulo>
 
@@ -136,10 +178,10 @@ class Login extends Component {
                         style={{
                             marginVertical: 5
                         }}
-                        value={this.state.senha}
+                        value={this.state.password}
                         onChangeText={text => {
                             this.setState({
-                                senha: text
+                                password: text
                             })
                         }}
                     />
@@ -166,9 +208,10 @@ class Login extends Component {
                             }} />
                     </View>
                 </View>
-            </KeyboardAwareScrollView>
+            </ScrollView>
+            //</KeyboardAwareScrollView>
         );
     }
 }
 
-export default withNavigation(Login);
+export default Login;
