@@ -35,7 +35,6 @@ export function post(url, params) {
         body: JSON.stringify(params),
     })
         .then((response) => {
-            console.log(response);
             return response.json()
         })
         .then((responseJson) => {
@@ -46,11 +45,12 @@ export function post(url, params) {
 
 export function postWithToken(url, params, token) {
     console.log('salve ' + token);
+    console.log(params);
     return fetch(global.server + url, {
         method: 'POST',
         headers: {
             'Authorization': 'Bearer ' + token,
-            Accept: 'application/json',
+            'Accept': 'application/json',
             'Content-Type': 'application/json',
             'User-Agent': USER_AGENT            
         },
@@ -59,6 +59,7 @@ export function postWithToken(url, params, token) {
     })
 
         .then((response) => {
+            
             return response.json()
         })
         .then((responseJson) => {

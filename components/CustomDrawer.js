@@ -6,6 +6,8 @@ import styles from '../assets/js/Styles';
 import { SimpleLineIcons } from '@expo/vector-icons';
 import Constants from "expo-constants"
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import { EventRegister } from 'react-native-event-listeners'
 export default class CustomDrawer extends Component {
 
 
@@ -18,21 +20,76 @@ export default class CustomDrawer extends Component {
             responsavel: '',
         }
     }
-    componentDidMount = async () => {
-        await AsyncStorage.getItem('descricao').then((descricao) => {
-            if (descricao) {
+    componentDidMount = () => {
+
+        // AsyncStorage.multiGet(['descricao', 'responsavel']).then(response => {
+        //     var descricao = response[0][1]
+        //     var responsavel = response[1][1]
+        //     this.setState({
+        //         descricao: descricao,
+        //         responsavel: responsavel
+        //     })
+        //     this.listener = EventRegister.addEventListener('login', () => {
+        //         if (descricao && responsavel) {
+        //             this.setState({
+        //                 descricao: descricao,
+        //                 responsavel: responsavel
+        //             })
+        //         }
+        //     })
+        // })
+
+
+        this.listener = EventRegister.addEventListener('login', () => {
+            AsyncStorage.multiGet(['descricao', 'responsavel']).then(response => {
+                var descricao = response[0][1]
+                var responsavel = response[1][1]
+                console.log('**********');
                 this.setState({
-                    descricao: descricao
-                })
-            }
-        })
-        await AsyncStorage.getItem('responsavel').then((responsavel) => {
-            if (responsavel) {
-                this.setState({
+                    descricao: descricao,
                     responsavel: responsavel
                 })
-            }
+            })
         })
+        AsyncStorage.multiGet(['descricao', 'responsavel']).then(response => {
+            console.log('+++++++++');
+            var descricao = response[0][1]
+            var responsavel = response[1][1]
+            this.setState({
+                descricao: descricao,
+                responsavel: responsavel
+            })
+        })
+
+
+
+
+
+
+
+        // this.listener = EventRegister.addEventListener('login', () => {
+        //     console.log('alooasodoasodoasodoasodoa');
+        //     AsyncStorage.getItem('descricao').then((descricao) => {
+        //         console.log('55555');
+        //         if (descricao) {
+        //             console.log('des');
+        //             this.setState({
+        //                 descricao: descricao
+        //             })
+        //         }
+        //     })
+        //     AsyncStorage.getItem('responsavel').then((responsavel) => {
+        //         if (responsavel) {
+        //             this.setState({
+        //                 responsavel: responsavel
+        //             })
+        //         }
+        //     })
+        // })
+
+    }
+    componentWillUnmount = () => {
+        this.listener = EventRegister.removeEventListener(this.listener)
     }
     navigateToScreen = (route) => (
         () => {
@@ -63,7 +120,7 @@ export default class CustomDrawer extends Component {
 
         //await DBUtil.deleteNotas();
         //await DBUtil.resetQuantidades();
-        AsyncStorage.clear()
+        await AsyncStorage.clear()
         RootNavigation.navigate('Login')
 
 
@@ -73,10 +130,11 @@ export default class CustomDrawer extends Component {
     render() {
         const version = Constants.manifest.version
         return (
-            <View style={{
-                flex: 1,
-                backgroundColor: '#FFF'
-            }}>
+            <View
+                style={{
+                    flex: 1,
+                    backgroundColor: '#FFF'
+                }}>
 
                 <View style={{
                     flex: 1,
@@ -114,7 +172,7 @@ export default class CustomDrawer extends Component {
 
                         <TouchableOpacity
                             activeOpacity={0.5}
-                            onPress={this.sair}
+                            onPress={this.clear}
                         >
                             <SimpleLineIcons name="logout" size={24} color="black" style={{
                                 marginRight: -10
@@ -125,7 +183,7 @@ export default class CustomDrawer extends Component {
                             activeOpacity={0.5}
                             onPress=
 
-                            {this.sair}>
+                            {this.clear}>
                             <Text style={styles.menu}>Sair</Text>
 
                         </TouchableOpacity>

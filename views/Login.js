@@ -13,6 +13,8 @@ import * as Server from '../components/ServerConfig';
 
 import styles from '../assets/js/Styles';
 
+import { EventRegister } from 'react-native-event-listeners'
+
 class Login extends Component {
 
     constructor(props) {
@@ -26,9 +28,9 @@ class Login extends Component {
         }
     }
     componentDidMount = () => {
-
     }
     login = async () => {
+
         console.log('logando')
         this.setState({
             erro: false,
@@ -38,38 +40,49 @@ class Login extends Component {
             { equipe: this.state.equipe, password: this.state.password })
             .then(json => {
                 console.log(json);
-                this.setState({
-                    loading: false
-                })
                 if (json.token) {
                     global.equipe = json.equipe
                     this.saveLogin(json.equipe, json.equipe._id, json.token).then(() => {
-
-                        NetInfo.fetch().then(state => {
-                            if (state.isConnected) {
-                                //baixar os itens do banco
-                                Server.get('item', json.token).then(response => {
-                                    DBUtil.saveItens(response).then(response => {
-                                        DBUtil.getItens().then((itens) => {
-                                            this.setState({
-                                                equipe: '',
-                                                password: '',
-                                            })
-                                            this.props.navigation.navigate('Items', {
-                                                itens: itens,
-                                            })
-                                        })
-                                    })
-                                });
-                            }
+                        this.setState({
+                            equipe: '',
+                            password: '',
+                            loading: false
                         })
+                        this.props.navigation.navigate('Items')
+                        //     NetInfo.fetch().then(state => {
+                        //         if (state.isConnected) {
+                        //             //baixar os itens do banco
+                        //             // listener ta mandando baixar os itens já tirar esses daqui
+                        //             Server.get('item', json.token).then(response => {
+                        //                 var data = {
+                        //                     itens: response,
+                        //                     equipeId: json.equipe._id
+                        //                 }
+                        //                 console.log('bbb');
+                        //                 DBUtil.saveItens(data).then(response => {
+                        //                     DBUtil.getItens(json.equipe._id).then((itens) => {
+                        //                         console.log('itens');
+                        //                         console.log(itens);
 
-
+                        //                         this.setState({
+                        //                             equipe: '',
+                        //                             password: '',
+                        //                             loading: false,
+                        //                         })
+                        //                         this.props.navigation.navigate('Items', {
+                        //                             itens: itens,
+                        //                         })
+                        //                     })
+                        //                 })
+                        //             });
+                        //         }
+                        //     })
+                        // })
                     })
-
                 } else {
                     this.setState({
-                        erro: true
+                        erro: true,
+                        loading: false
                     })
                 }
             })
@@ -85,8 +98,8 @@ class Login extends Component {
             AsyncStorage.setItem('responsavel', equipe.responsavel)
             AsyncStorage.setItem('descricao', equipe.descricao)
             AsyncStorage.setItem('token', token)
-            AsyncStorage.setItem('idEquipe', id)
-            
+            AsyncStorage.setItem('equipeId', id)
+            EventRegister.emit('login')
             return;
         } catch (e) { }
     }
@@ -124,8 +137,8 @@ class Login extends Component {
                 }
                 }
                 keyboardShouldPersistTaps={'handled'}
-                alwaysBounceVertical={true}
                 minimumZoomScale={2}
+                keyboardDismissMode={'on-drag'}
 
             >
 

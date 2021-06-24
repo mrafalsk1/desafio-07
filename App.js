@@ -12,12 +12,14 @@ import { createDrawerNavigator, DrawerContent } from '@react-navigation/drawer';
 
 import { navigationRef } from './assets/js/RootNavigation';
 
+
 import Items from './views/Items';
 import Login from './views/Login';
 
 import CustomDrawer from './components/CustomDrawer';
 import * as Server from './components/ServerConfig';
 import * as DBUtil from './components/DBUtil';
+import { EventRegister } from 'react-native-event-listeners';
 
 
 
@@ -42,7 +44,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-
+    
   }
 
   clearStorage = async () => {
@@ -60,7 +62,8 @@ class App extends Component {
       'OpenSans-Bold': require('./assets/fonts/OpenSans-Bold.ttf'),
       'OpenSans': require('./assets/fonts/OpenSans-Regular.ttf'),
     });
-
+    DBUtil.dropTables()
+    DBUtil.prepareDB()
     console.log('Preparando banco...')
     await DBUtil.prepareDB().then((res) => {
       if (res === true) {
@@ -69,7 +72,6 @@ class App extends Component {
     }).catch((e) => {
       console.error(e)
     })
-
     console.log('>>>> CHECK LOGIN')
     await AsyncStorage.getItem('token').then((values) => {
       this.setState({
@@ -82,8 +84,7 @@ class App extends Component {
         this.setState({
           initial: 'Items',
         })
-
-
+        EventRegister.emit('login')
         global.equipe = login.equipe
       }
     })

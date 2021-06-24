@@ -60,8 +60,9 @@ class Item extends PureComponent {
     }
     async updateQuantidade(item) {
         console.log('esse');
+        console.log(this.props.item.equipe_id);
         console.log(item);
-        setTimeout(() => DBUtil.setQuantidades(item).then(response => {
+        setTimeout(() => DBUtil.setQuantidades(item,this.props.item.equipe_id).then(response => {
             console.log(response);
         }), 300)
 
@@ -92,7 +93,7 @@ class Item extends PureComponent {
                             flexDirection: 'column',
                             justifyContent: 'center',
                             height: '100%',
-                            padding: 18
+                            padding: 18,
                         }}
                         activeOpacity={0.5}
                         underlayColor='#FAFAFA'
@@ -173,7 +174,7 @@ class Item extends PureComponent {
                                             }}>
                                                 {showRetirar && (
                                                     <DefaultLabelQuantidade
-                                                        title={this.state.quantidadeRetirada}
+                                                        title={this.state.quantidadeRetirada === '' ? 0 : this.state.quantidadeRetirada}
                                                         operation={'Ret: '}
                                                     />
 
@@ -190,13 +191,13 @@ class Item extends PureComponent {
                                                 }
                                                 {showInstalar &&
                                                     <DefaultLabelQuantidade
-                                                        title={this.state.quantidadeInstalada}
+                                                        title={this.state.quantidadeInstalada === '' ? 0 : this.state.quantidadeInstalada}
                                                         operation={'Inst: '}
                                                     />
                                                 }
                                                 {showSubstituir &&
                                                     <DefaultLabelQuantidade
-                                                        title={this.state.quantidadeSubstituida}
+                                                        title={this.state.quantidadeSubstituida === '' ? 0 : this.state.quantidadeSubstituida}
                                                         operation={'Subst: '}
                                                     />
 

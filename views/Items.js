@@ -14,7 +14,10 @@ import * as Server from '../components/ServerConfig'
 
 import { Feather } from '@expo/vector-icons';
 import { EvilIcons } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
 
+import { Provider } from 'react-redux'
+import { EventRegister } from 'react-native-event-listeners';
 
 
 class Items extends Component {
@@ -38,9 +41,6 @@ class Items extends Component {
 
 
     componentDidMount = async () => {
-        this.setState({
-            loading: true,
-        })
         // this._unsubscribe = this.props.navigation.addListener('focus', () => {
         //     console.log('a');
         //     AsyncStorage.getItem('token').then((token) => {
@@ -67,43 +67,165 @@ class Items extends Component {
         //         })
         //     })
         // })
+        console.log('r');
+        let a = false
+        this.listener = EventRegister.addEventListener('login', () => {
+            this.setState({
+                pesquisa: '',
+            })
+            console.log('aaa');
+            a = true;
+            NetInfo.fetch().then(state => {
+                this.setState({
+                    loading: true
+                })
+                console.log('?dsa');
+                AsyncStorage.getItem('equipeId').then(equipeId => {
+                    console.log('?');
+                    console.log(equipeId);
+                    if (state) {
+                        if (this.props.route.params) {
+                            console.log('aqul pelo login');
+                            this.setState({
+                                itens: this.props.route.params.itens,
+                                todosItens: this.props.route.params.itens,
+                                loading: false
+                            })
+                            console.log('passo');
+                        } else {
+                            AsyncStorage.getItem('token').then(token => {
+                                Server.get('item', token).then(response => {
+                                    var data = {
+                                        itens: response,
+                                        equipeId: equipeId
+                                    }
+                                    DBUtil.saveItens(data).then(response => {
+                                        console.log(response);
+                                        DBUtil.getItens(equipeId).then((itens) => {
+                                            console.log(itens[0]);
+                                            this.setState({
+                                                itens: itens,
+                                                todosItens: itens,
+                                                loading: false,
+                                            })
+                                        })
+                                    })
+                                });
+                            })
+                        }
+                    } else {
+                        DBUtil.getItens(equipeId).then((itens) => {
+                            this.setState({
+                                itens: itens,
+                                todosItens: itens,
+                                loading: false,
+                            })
+                        })
+                    }
+                })
+            })
+        })
+        console.log('kowalski relatório');
+        console.log(a);
         NetInfo.fetch().then(state => {
-            if (state) {
-                if (this.props.route.params) {
-                    console.log('aqul pelo login');
-                    console.log(this.props.route.params.itens);
-                    this.setState({
-                        itens: this.props.route.params.itens,
-                        todosItens: this.props.route.params.itens,
-                        loading: false
-                    })
-                    console.log('passo');
-                } else {
-                    AsyncStorage.getItem('token').then(token => {
-                        Server.get('item', token).then(response => {
-                            DBUtil.saveItens(response).then(response => {
-                                DBUtil.getItens().then((itens) => {
-                                    this.setState({
-                                        itens: itens,
-                                        todosItens: itens,
-                                        loading: false,
+            this.setState({
+                loading: true
+            })
+            console.log('?dsa');
+            AsyncStorage.getItem('equipeId').then(equipeId => {
+                console.log('?');
+                console.log(equipeId);
+                if (state) {
+                    if (this.props.route.params) {
+                        console.log('aqul pelo login');
+                        this.setState({
+                            itens: this.props.route.params.itens,
+                            todosItens: this.props.route.params.itens,
+                            loading: false
+                        })
+                        console.log('passo');
+                    } else {
+                        AsyncStorage.getItem('token').then(token => {
+                            Server.get('item', token).then(response => {
+                                var data = {
+                                    itens: response,
+                                    equipeId: equipeId
+                                }
+                                DBUtil.saveItens(data).then(response => {
+                                    console.log(response);
+                                    DBUtil.getItens(equipeId).then((itens) => {
+                                        console.log(itens[0]);
+                                        this.setState({
+                                            itens: itens,
+                                            todosItens: itens,
+                                            loading: false,
+                                        })
                                     })
                                 })
-                            })
-                        });
+                            });
+                        })
+                    }
+                } else {
+                    DBUtil.getItens(equipeId).then((itens) => {
+                        this.setState({
+                            itens: itens,
+                            todosItens: itens,
+                            loading: false,
+                        })
                     })
-
                 }
-            } else {
-                DBUtil.getItens().then((itens) => {
-                    this.setState({
-                        itens: itens,
-                        todosItens: itens,
-                        loading: false,
-                    })
-                })
-            }
+            })
         })
+
+        // NetInfo.fetch().then(state => {
+        //     this.setState({
+        //         loading: true
+        //     })
+        //     console.log('?dsa');
+        //     AsyncStorage.getItem('equipeId').then(equipeId => {
+        //         console.log('?');
+        //         console.log(equipeId);
+        //         if (state) {
+        //             if (this.props.route.params) {
+        //                 console.log('aqul pelo login');
+        //                 this.setState({
+        //                     itens: this.props.route.params.itens,
+        //                     todosItens: this.props.route.params.itens,
+        //                     loading: false
+        //                 })
+        //                 console.log('passo');
+        //             } else {
+        //                 AsyncStorage.getItem('token').then(token => {
+        //                     Server.get('item', token).then(response => {
+        //                         var data = {
+        //                             itens: response,
+        //                             equipeId: equipeId
+        //                         }
+        //                         console.log(response);
+        //                         DBUtil.saveItens(data).then(response => {
+        //                             console.log('aa');
+        //                             DBUtil.getItens(equipeId).then((itens) => {
+        //                                 this.setState({
+        //                                     itens: itens,
+        //                                     todosItens: itens,
+        //                                     loading: false,
+        //                                 })
+        //                             })
+        //                         })
+        //                     });
+        //                 })
+        //             }
+        //         } else {
+        //             DBUtil.getItens(equipeId).then((itens) => {
+        //                 this.setState({
+        //                     itens: itens,
+        //                     todosItens: itens,
+        //                     loading: false,
+        //                 })
+        //             })
+        //         }
+        //     })
+        // })
 
 
 
@@ -125,20 +247,22 @@ class Items extends Component {
     //     })
 
     // })
+
     enviar = async () => {
         // sincronizar com o server
         this.setState({
             loading: true
         })
-        await AsyncStorage.multiGet(['idEquipe', 'token']).then(response => {
+        await AsyncStorage.multiGet(['equipeId', 'token']).then(response => {
             console.log(response[0][1] + '  -----------------------');
+            const equipeId = response[0][1]
             let dataToSend = {
-                'team': response[0][1],
+                'team': equipeId,
                 'items': []
             }
+            console.log('enviar');
 
-
-            DBUtil.getItens().then(itens => {
+            DBUtil.getItens(equipeId).then(itens => {
                 itens.forEach(item => {
                     if (item.quantidade_instalada != 0 || item.quantidade_retirada != 0 || item.quantidade_substituida != 0) {
                         let data = {
@@ -153,14 +277,34 @@ class Items extends Component {
                         dataToSend.items.push(data)
                     }
                 });
-
+                // if (dataToSend.itens.length === 0) {
+                //     console.log('bom dia e cia');
+                //     Alert.alert(
+                //         'Erro',
+                //         'Por favor insira algum dado antes de enviar.',
+                //         [
+                //             { text: 'Cancelar', style: 'cancel' }
+                //         ],
+                //         { cancelable: true }
+                //     );
+                //     DBUtil.getItens(equipeId).then((itens) => {
+                //         console.log(itens[0]);
+                //         this.setState({
+                //             itens: itens,
+                //             todosItens: itens,
+                //             loading: false,
+                //         })
+                //     })
+                //     return;
+                // }
                 console.log('+++++++++++++++');
                 console.log(dataToSend);
                 Server.postWithToken('activity', dataToSend, response[1][1]).then(response => {
+                    console.log(':)');
                     console.log(response);
-                    DBUtil.resetQuantidades().then(response => {
+                    DBUtil.resetQuantidades(equipeId).then(response => {
                         console.log(response);
-                        DBUtil.getItens().then((itens) => {
+                        DBUtil.getItens(equipeId).then((itens) => {
                             console.log(itens[0]);
                             this.setState({
                                 itens: itens,
@@ -173,12 +317,15 @@ class Items extends Component {
             })
         })
     }
-    handdleEnviar = async () => {
+    componentWillUnmount = () => {
+        this.listener = EventRegister.removeEventListener(this.listener)
+    }
+    handlePressButtonEnviar = async () => {
 
 
         Alert.alert(
             'Aviso',
-            'Todos os dados serão enviados, desejdasdsaa prosseguir?',
+            'Todos os dados serão enviados, deseja prosseguir?',
             [
                 { text: 'Cancelar', style: 'cancel' },
                 { text: 'Continuar', onPress: () => this.enviar() },
@@ -187,7 +334,7 @@ class Items extends Component {
         );
 
     };
-    handdleClick = async (id) => {
+    handleClick = async (id) => {
         // console.log('jidsajdiajosd');
         // let { item, index } = await this.state.itens.find((item, index, a) => {
         //     if (item.it_id === id) {
@@ -224,6 +371,8 @@ class Items extends Component {
 
 
     // shouldComponentUpdate(nextProps, nextState) {
+    //     console.log(nextState);
+    //     console.log(this.state);
     //     if (this.state.loading !== nextState.loading) {
     //         return true
     //     }
@@ -273,7 +422,7 @@ class Items extends Component {
                 voltar={true}
                 onFocus={this.onFocus}
                 style={{
-                    padding: 15
+                    padding: 20
                 }}
             >
                 <View
@@ -290,7 +439,7 @@ class Items extends Component {
                         }}>
                         <Feather
                             name="menu"
-                            size={40}
+                            size={44}
                             color="black"
                             style={{
                                 paddingRight: 185,
@@ -299,7 +448,7 @@ class Items extends Component {
                     </TouchableOpacity>
                     <DefaultButtonFlP
                         title='Enviar'
-                        onPress={() => this.handdleEnviar()}
+                        onPress={() => this.handlePressButtonEnviar()}
                     />
 
 
@@ -315,16 +464,27 @@ class Items extends Component {
 
                     <DefaultInput
                         style={{
-                            width: '75%',
+                            width: '100%',
                             height: 40,
                             paddingRight: 30
 
                         }}
                         value={this.state.pesquisa}
-                        onChangeText={text => this.setState({
-                            pesquisa: text
-                        })}
+                        onChangeText={text => {
+                            this.setState({
+                                pesquisa: text
+                            })
+                            setTimeout(() => {
+                                this.buscar(text)
+                            }, 200)
+
+                        }
+
+                        }
+                        placeholder={'Pesquisar...'}
                     />
+
+
                     <TouchableOpacity style={{
                         alignItems: 'flex-end',
                         justifyContent: 'center',
@@ -334,12 +494,12 @@ class Items extends Component {
                     >
                         <EvilIcons name="close" size={26} color="#C4CAD0" />
                     </TouchableOpacity>
-                    <DefaultButtonSearch
+                    {/* <DefaultButtonSearch
                         style={{
                             marginLeft: '5%',
                         }}
                         onPress={this.buscar}
-                    />
+                    /> */}
                 </View>
                 {/* <MateriaElCommunityIcons name="logout-variant" size={40} color="#EF8F3B" /> */}
 
@@ -355,7 +515,7 @@ class Items extends Component {
                             }}
                             showsVerticalScrollIndicator={false}
                             data={this.state.itens}
-                            renderItem={({ item, index }) => <Item item={item} idExpanded={this.state.idExpanded} index={index} onPress={() => this.handdleClick(item.it_id)} />}
+                            renderItem={({ item, index }) => <Item item={item} idExpanded={this.state.idExpanded} index={index} onPress={() => this.handleClick(item.it_id)} />}
                             keyExtractor={item => item.it_id + ''}
                             // getItemLayout={(data, index) => (
                             //     { length: 60, offset: 100 * index, index }
@@ -392,12 +552,10 @@ class Items extends Component {
         })
     }
 
-    buscar = async () => {
-        Keyboard.dismiss()
-        console.log(this.state.pesquisa);
-        console.log(this.state.itens);
+    buscar = async (text) => {
         var data = this.state.todosItens;
-
+        console.log(this.state.pesquisa);
+        console.log(text);
         function filterItems(query) {
             return data.filter(function (el) {
                 return el.descricao.toLowerCase().indexOf(query.toLowerCase()) > -1;
@@ -411,13 +569,15 @@ class Items extends Component {
 
         } else {
             this.setState({ loading: true })
-            DBUtil.getItens().then((itens) => {
-                console.log(itens[0]);
-                this.setState({
-                    itens: itens,
-                    loading: false
+            AsyncStorage.getItem('equipeId').then(equipeId => {
+                DBUtil.getItens(equipeId).then((itens) => {
+                    this.setState({
+                        itens: itens,
+                        loading: false
+                    })
                 })
             })
+
         }
     }
 }
