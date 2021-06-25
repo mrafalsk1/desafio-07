@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-
 import { View } from 'react-native';
+
 import styles from '../assets/js/Styles';
+
 import Titulo from './Titulo';
 
 class DefaultView extends Component {

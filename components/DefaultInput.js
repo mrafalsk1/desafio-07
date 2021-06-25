@@ -5,35 +5,6 @@ class DefaultInput extends Component {
     constructor(props) {
         super(props);
     }
-    // handdleChangeRetirada = (value, index) => {
-    //     console.log(value, index)
-    //     let itens = [...this.state.itens]
-    //     let item = { ...itens[index] }
-    //     item.quantidade_retirada = value
-    //     itens[index] = item
-    //     this.setState({ itens })
-    //     this.handdleUpdateQuantidades(item)
-
-    // }
-    // handdleChangeSubstituida = (value, index) => {
-    //     console.log(value, index)
-    //     let itens = [...this.state.itens]
-    //     let item = { ...itens[index] }
-    //     item.quantidade_substituida = value
-    //     itens[index] = item
-    //     this.setState({ itens })
-    //     this.handdleUpdateQuantidades(item)
-
-    // }
-    // handdleUpdateQuantidades = (item) => {
-    //     console.log('a');
-    //     setTimeout(() => {
-    //         DBUtil.updateQuantidades(item).then(response => {
-    //             console.log(response);
-    //         });
-    //     }, 300)
-    // }
-    // on
 
     render() {
         return (

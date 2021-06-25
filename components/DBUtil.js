@@ -39,15 +39,10 @@ export async function prepareDB() {
   })
 }
 export async function getItens(equipeId) {
-  console.log(equipeId);
   return new Promise((resolve, reject) => {
     getDB().transaction(
       tx => {
         tx.executeSql('select q.*,i.* from quantidades q inner join itens i on q.item_id = i.it_id where q.equipe_id = ? order by i.descricao', [equipeId], (_, { rows }) => resolve(rows._array), reject)
-        // tx.executeSql('select i.*,(select q.quantidade_retirada from quantidades q where i.it_id = q.item_id and q.equipe_id = ?) as quantidade_retirada,'
-        //   + ' (select q.quantidade_substituida from quantidades q where i.it_id = q.item_id and q.equipe_id = ?) as quantidade_substituida,'
-        //   + ' (select q.quantidade_instalada from quantidades q where i.it_id = q.item_id and q.equipe_id = ?) as quantidade_instalada'
-        //   + 'from itens i', [equipeId], (_, { rows }) => resolve(rows._array), reject)
       },
       (e) => reject(e)
     );
@@ -60,16 +55,13 @@ export async function saveItens(data) {
         data.itens.forEach(it => {
           tx.executeSql('select * from quantidades where item_id = ?', [it._id], (_, { rows }) => {
             if (!rows.item(0)) {
-              console.log('insert');
               tx.executeSql('insert into itens(it_id, descricao, us_instalar, us_retirar, us_substituir) values (?, ?, ?, ?, ?)', [it._id, it.descricao, it.us_instalar, it.us_retirar, it.us_substituir])
               tx.executeSql('insert into quantidades(qt_id,item_id, equipe_id) values (?, ?, ?)', [uuid.v4(), it._id, data.equipeId])
             }
             else {
-              console.log('update');
               tx.executeSql('update itens set descricao = ? where it_id = ?', [it.descricao, it._id])
               tx.executeSql('select * from quantidades where item_id = ? and equipe_id = ?', [it._id, data.equipeId], (_, { rows }) => {
                 if (!rows.item(0)) {
-                  console.log('quantidades');
                   tx.executeSql('insert into quantidades(qt_id,item_id, equipe_id) values (?,?,?)', [uuid.v4(), it._id, data.equipeId])
                 }
               })
@@ -77,52 +69,10 @@ export async function saveItens(data) {
             }
           }, reject)
         })
-
-
-
-        // var itens = []
-        // tx.executeSql('select * from itens', [], (_, { rows }) => {
-        //   console.log(rows);
-        //   itens = rows._array
-        //   data.itens.forEach(it => {
-        //     if()
-        //   })
-        // })
-
-
-
-
-        // tx.executeSql('insert or replace into itens(it_id, descricao, us_instalar, us_retirar, us_substituir) values (?, ?, ?, ?, ?)', [it._id, it.descricao, it.us_instalar, it.us_retirar, it.us_substituir],
-        // ((tsx, result) => {
-        //   console.log(result.rows);
-        // })
-        // )
-        // tx.executeSql('insert into quantidades(qt_id,item_id, equipe_id) values (?, ?, ?)', [uuid.v4(), it._id, data.equipeId])
-
-
-
-        // tx.executeSql('if not exists(select * from itens where it_id = ?) begin insert into itens (it_id, descricao, us_instalar, us_retirar, us_substituir) values '
-        //   + '(?, ?, ?, ?, ?)'select * from itens, [it.id,it.id,it.descricao, it.us_instalar, it.us_retirar, it.us_substituir])
-
-
-
       },
       (e) => { reject(e) },
       () => { resolve(true) }
     );
-  })
-}
-export async function saveQuantidades(itens) {
-  return new Promise((resolve, reject) => {
-    getDB().transaction(
-      tx => {
-        itens.forEach(it => {
-          tx.executeSql('insert into quantidades(item_id) value (?)', [it.id])
-        })
-      },
-      (e) => { reject(e) },
-      () => { resolve(true) }
-    )
   })
 }
 export async function resetQuantidades(equipeId) {
@@ -138,8 +88,6 @@ export async function resetQuantidades(equipeId) {
 }
 export async function setQuantidades(item, equipeId) {
   return new Promise((resolve, reject) => {
-    console.log('aqui');
-    console.log(equipeId);
     getDB().transaction(
       tx => {
         tx.executeSql('update quantidades set quantidade_retirada = ?, quantidade_substituida = ?, quantidade_instalada= ? where item_id= ? and equipe_id = ?', [item.quantidadeRetirada, item.quantidadeSubstituida, item.quantidadeInstalada, item.item_id, equipeId])

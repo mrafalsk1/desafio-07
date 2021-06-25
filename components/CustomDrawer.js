@@ -1,13 +1,17 @@
 import React, { Component } from 'react';
 import { View, Text, TouchableOpacity, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { EventRegister } from 'react-native-event-listeners'
 
 import * as RootNavigation from '../assets/js/RootNavigation'
 import styles from '../assets/js/Styles';
+
 import { SimpleLineIcons } from '@expo/vector-icons';
 import Constants from "expo-constants"
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { EventRegister } from 'react-native-event-listeners'
+
+
+
 export default class CustomDrawer extends Component {
 
 
@@ -21,30 +25,10 @@ export default class CustomDrawer extends Component {
         }
     }
     componentDidMount = () => {
-
-        // AsyncStorage.multiGet(['descricao', 'responsavel']).then(response => {
-        //     var descricao = response[0][1]
-        //     var responsavel = response[1][1]
-        //     this.setState({
-        //         descricao: descricao,
-        //         responsavel: responsavel
-        //     })
-        //     this.listener = EventRegister.addEventListener('login', () => {
-        //         if (descricao && responsavel) {
-        //             this.setState({
-        //                 descricao: descricao,
-        //                 responsavel: responsavel
-        //             })
-        //         }
-        //     })
-        // })
-
-
         this.listener = EventRegister.addEventListener('login', () => {
             AsyncStorage.multiGet(['descricao', 'responsavel']).then(response => {
                 var descricao = response[0][1]
                 var responsavel = response[1][1]
-                console.log('**********');
                 this.setState({
                     descricao: descricao,
                     responsavel: responsavel
@@ -52,7 +36,6 @@ export default class CustomDrawer extends Component {
             })
         })
         AsyncStorage.multiGet(['descricao', 'responsavel']).then(response => {
-            console.log('+++++++++');
             var descricao = response[0][1]
             var responsavel = response[1][1]
             this.setState({
@@ -60,48 +43,10 @@ export default class CustomDrawer extends Component {
                 responsavel: responsavel
             })
         })
-
-
-
-
-
-
-
-        // this.listener = EventRegister.addEventListener('login', () => {
-        //     console.log('alooasodoasodoasodoasodoa');
-        //     AsyncStorage.getItem('descricao').then((descricao) => {
-        //         console.log('55555');
-        //         if (descricao) {
-        //             console.log('des');
-        //             this.setState({
-        //                 descricao: descricao
-        //             })
-        //         }
-        //     })
-        //     AsyncStorage.getItem('responsavel').then((responsavel) => {
-        //         if (responsavel) {
-        //             this.setState({
-        //                 responsavel: responsavel
-        //             })
-        //         }
-        //     })
-        // })
-
     }
     componentWillUnmount = () => {
         this.listener = EventRegister.removeEventListener(this.listener)
     }
-    navigateToScreen = (route) => (
-        () => {
-
-
-            // const navigateAction = NavigationActions.navigate({
-            //     routeName: route,
-            //     params: params
-            // });
-            // this.props.navigation.dispatch(navigateAction);
-        }
-    )
 
     sair = () => {
         Alert.alert(
@@ -117,9 +62,6 @@ export default class CustomDrawer extends Component {
 
     clear = async () => {
 
-
-        //await DBUtil.deleteNotas();
-        //await DBUtil.resetQuantidades();
         await AsyncStorage.clear()
         RootNavigation.navigate('Login')
 

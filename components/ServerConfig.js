@@ -3,8 +3,6 @@
 const USER_AGENT = 'ProcelAPP'
 
 export function get(url, token) {
-    console.log('token esrver');
-    console.log(token);
     return fetch(global.server + url, {
         method: 'GET',
         headers: {
@@ -44,8 +42,6 @@ export function post(url, params) {
 }
 
 export function postWithToken(url, params, token) {
-    console.log('salve ' + token);
-    console.log(params);
     return fetch(global.server + url, {
         method: 'POST',
         headers: {

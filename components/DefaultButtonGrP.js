@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import { Text } from 'react-native';
+
 import { LinearGradient } from 'expo-linear-gradient';
+
 import DefaultButton from './DefaultButton';
+
 import styles from '../assets/js/Styles';
 
 

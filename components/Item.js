@@ -21,7 +21,6 @@ class Item extends PureComponent {
         }
     }
     handdleChangeRetirada(text) {
-        console.log(text);
         this.setState({
             quantidadeRetirada: text
         })
@@ -59,11 +58,8 @@ class Item extends PureComponent {
 
     }
     async updateQuantidade(item) {
-        console.log('esse');
-        console.log(this.props.item.equipe_id);
-        console.log(item);
         setTimeout(() => DBUtil.setQuantidades(item,this.props.item.equipe_id).then(response => {
-            console.log(response);
+            
         }), 300)
 
     }

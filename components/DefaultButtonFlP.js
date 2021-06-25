@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
+
 import DefaultButton from './DefaultButton';
+
 import styles from '../assets/js/Styles';
 
 

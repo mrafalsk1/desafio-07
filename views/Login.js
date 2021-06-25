@@ -1,19 +1,17 @@
 import React, { Component } from 'react';
-import { Text, View, Image, ScrollView } from 'react-native';
-import { useNavigation } from '@react-navigation/native'
-import NetInfo from '@react-native-community/netinfo'
+import { Text, View, Image, ScrollView, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Titulo from '../components/Titulo';
 import DefaultInput from '../components/DefaultInput';
 import DefaultButtonGrP from '../components/DefaultButtonGrP';
 
-import * as DBUtil from '../components/DBUtil'
 import * as Server from '../components/ServerConfig';
 
 import styles from '../assets/js/Styles';
 
 import { EventRegister } from 'react-native-event-listeners'
+import NetInfo from '@react-native-community/netinfo';
 
 class Login extends Component {
 
@@ -31,61 +29,45 @@ class Login extends Component {
     }
     login = async () => {
 
-        console.log('logando')
-        this.setState({
-            erro: false,
-            loading: true
-        })
-        await Server.post('auth/app',
-            { equipe: this.state.equipe, password: this.state.password })
-            .then(json => {
-                console.log(json);
-                if (json.token) {
-                    global.equipe = json.equipe
-                    this.saveLogin(json.equipe, json.equipe._id, json.token).then(() => {
-                        this.setState({
-                            equipe: '',
-                            password: '',
-                            loading: false
-                        })
-                        this.props.navigation.navigate('Items')
-                        //     NetInfo.fetch().then(state => {
-                        //         if (state.isConnected) {
-                        //             //baixar os itens do banco
-                        //             // listener ta mandando baixar os itens já tirar esses daqui
-                        //             Server.get('item', json.token).then(response => {
-                        //                 var data = {
-                        //                     itens: response,
-                        //                     equipeId: json.equipe._id
-                        //                 }
-                        //                 console.log('bbb');
-                        //                 DBUtil.saveItens(data).then(response => {
-                        //                     DBUtil.getItens(json.equipe._id).then((itens) => {
-                        //                         console.log('itens');
-                        //                         console.log(itens);
+        await NetInfo.fetch().then(state => {
+            if (!state.isConnected) {
+                Alert.alert(
+                    'Erro',
+                    'É necessária a conexão com interet para fazer o login',
+                    [
+                        { text: 'Cancelar', style: 'cancel' }
+                    ],
+                    { cancelable: true }
+                );
+                return;
+            } else {
+                this.setState({
+                    erro: false,
 
-                        //                         this.setState({
-                        //                             equipe: '',
-                        //                             password: '',
-                        //                             loading: false,
-                        //                         })
-                        //                         this.props.navigation.navigate('Items', {
-                        //                             itens: itens,
-                        //                         })
-                        //                     })
-                        //                 })
-                        //             });
-                        //         }
-                        //     })
-                        // })
+                    loading: true
+                })
+                Server.post('auth/app',
+                    { equipe: this.state.equipe, password: this.state.password })
+                    .then(json => {
+                        if (json.token) {
+                            this.saveLogin(json.equipe, json.equipe._id, json.token).then(() => {
+                                this.setState({
+                                    equipe: '',
+                                    password: '',
+                                    loading: false
+                                })
+                                this.props.navigation.navigate('Items')
+                            })
+                        } else {
+                            this.setState({
+                                erro: true,
+                                loading: false
+                            })
+                        }
                     })
-                } else {
-                    this.setState({
-                        erro: true,
-                        loading: false
-                    })
-                }
-            })
+            }
+        })
+
     }
 
     saveLogin = async (equipe, id, token) => {
@@ -115,17 +97,6 @@ class Login extends Component {
     render() {
 
         return (
-            /* <KeyboardAwareScrollView enableOnAndroid scrollEnabled
-                 keyboardShouldPersistTaps="handled"
-                 extraScrollHeight={50}
-                 contentContainerStyle={{
-                     ...styles.defaultPadding,
-                     ...styles.defaultBgColor,
-                     flexGrow: 1,
-                     width: '100%',
-                     flexDirection: 'column',
-                     alignItems: 'stretch'
-                 }}>*/
             <ScrollView
                 contentContainerStyle={{
                     ...styles.defaultPadding,
@@ -222,7 +193,6 @@ class Login extends Component {
                     </View>
                 </View>
             </ScrollView>
-            //</KeyboardAwareScrollView>
         );
     }
 }
